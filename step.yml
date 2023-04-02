@@ -68,7 +68,7 @@ toolkit:
 
 
 inputs:
-    - app_location: $APP_LOCATION
+    - app_location:
       opts:
         title: "App file URL"
         summary: "URL to app file"
@@ -97,7 +97,7 @@ inputs:
     - app_signing_cert: 
       opts:
         title: "GooglePlay Signing Fingerprint"
-        description: "Google Play signing SHA-1/SHA256 fingerprint (will be used if provided)"
+        description: "Google Play signing SHA-1/SHA-256 fingerprint (will be used if provided)"
         is_required: false
         
         
