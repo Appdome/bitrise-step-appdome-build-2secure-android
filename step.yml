@@ -97,7 +97,7 @@ inputs:
     - gp_signing: "true"
       opts:
         title: "Google Play Signing?"
-        description: "Sign the app for Google Play (true/false)"
+        description: "Sign the app for Google Play (true/false)?"
         value_options:
         - "true"
         - "false"
