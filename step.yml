@@ -97,7 +97,7 @@ inputs:
     - gp_signing: "true"
       opts:
         title: "Google Play Signing?"
-        description: "Sign the app for Google Play? If True, Requires $SIGN_FINGERPRINT in Secrets tab."
+        description: "Sign the app for Google Play? If 'true', requires $SIGN_FINGERPRINT in the Secrets tab."
         value_options:
         - "true"
         - "false"
