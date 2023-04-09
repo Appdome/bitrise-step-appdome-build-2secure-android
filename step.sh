@@ -39,7 +39,7 @@ then
 else
 	app_file=$app_location
 fi
-
+ls -al
 mkdir output
 certificate_output=../output/certificate.pdf
 output=../output/Appdome_$(basename $app_file)
