@@ -94,12 +94,21 @@ inputs:
         - "Auto-Dev-Signing"
         is_required: true
         
-    - app_signing_cert: 
+    - gp_signing: "true"
       opts:
-        title: "GooglePlay Signing Fingerprint"
-        description: "Google Play signing SHA-1/SHA-256 fingerprint (will be used if provided)"
-        is_required: false
+        title: "Google Play Signing?"
+        description: "Sign the app for Google Play (true/false)"
+        value_options:
+        - "true"
+        - "false"
+        is_required: true
         
+   # - app_signing_cert: 
+#      opts:
+#        title: "Signing Fingerprint"
+#        description: "Signing SHA-1/SHA-256 fingerprint"
+#        is_required: false
+#        
         
 #   - output_location: 
 #      opts:
