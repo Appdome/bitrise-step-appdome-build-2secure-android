@@ -54,11 +54,17 @@ git clone https://github.com/Appdome/appdome-api-bash.git
 cd appdome-api-bash
 
 
-echo "Android platform detected"	
-gs=""
-if [[ -n $app_signing_cert ]]; then
-	gs="--google_play_signing ${app_signing_cert}"
+echo "Android platform detected"
+gp=""
+if [[ $gp_signing == "true" ]]; then
+	gp="--google_play_signing"
 fi
+
+cf=""
+if [[ -n $SIGN_FINGERPRINT ]]; then
+	cf="--signing_fingerprint ${SIGN_FINGERPRINT}"
+fi
+
 case $sign_method in
 "Private-Signing")		echo "Private Signing"
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
@@ -66,8 +72,8 @@ case $sign_method in
 							--fusion_set_id $fusion_set_id \
 							$tm \
 							--private_signing \
-							--signing_fingerprint $SIGN_FINGERPRINT \
-							$gs \
+							$gp \
+							$cf \
 							--output $output \
 							--certificate_output $certificate_output 
 						;;
@@ -77,8 +83,8 @@ case $sign_method in
 							--fusion_set_id $fusion_set_id \
 							$tm \
 							--auto_dev_private_signing \
-							--signing_fingerprint $SIGN_FINGERPRINT \
-							$gs \
+							$gp \
+							$cf \
 							--output $output \
 							--certificate_output $certificate_output 
 						;;
@@ -95,7 +101,8 @@ case $sign_method in
 							--keystore $keystore_file \
 							--keystore_pass $keystore_pass \
 							--keystore_alias $keystore_alias \
-							$gs \
+							$gp \
+							$cf \
 							--key_pass $key_pass \
 							--output $output \
 							--certificate_output $certificate_output 
