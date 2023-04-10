@@ -1,5 +1,5 @@
 #!/bin/bash
-# set -ex
+set -ex
 
 # echo "This is the value specified for the input 'example_step_input': ${example_step_input}"
 
@@ -50,7 +50,7 @@ if [[ -n $team_id ]]; then
 	tm="--team_id ${team_id}"
 fi
 
-git clone https://github.com/Appdome/appdome-api-bash.git
+git clone https://github.com/Appdome/appdome-api-bash.git > /dev/null
 cd appdome-api-bash
 
 
