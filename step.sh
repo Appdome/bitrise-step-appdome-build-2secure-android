@@ -33,7 +33,7 @@ download_file() {
 export APPDOME_CLIENT_HEADER="Bitrise/1.0.0"
 
 if [[ -z $APPDOME_API_KEY ]]; then
-	echo "No \APPDOME_API_KEY was provided. Exiting."
+	echo 'No APPDOME_API_KEY was provided. Exiting.'
 	exit 1
 fi
 
