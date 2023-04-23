@@ -8,14 +8,14 @@
 # - Bitrise CLI guides: http://devcenter.bitrise.io/bitrise-cli/
 
 title: |-
-  Appdome Build
+  Appdome-Build-2Secure step for Android
 summary: |
   Builds a mobile app using Appdome's platform
 description: |
-  Integration that allows activating security and app protection features, bulding and signing mobile apps using Appdome's API.
+  Integration that allows activating security and app protection features, bulding and signing mobile apps using Appdome's API. For detailes see: https://www.appdome.com/how-to/appsec-release-orchestration/mobile-appsec-cicd/use-appdome-build-2secure-step-for-bitrise
 website: https://github.com/Appdome/bitrise_build-2secure-android
 source_code_url: https://github.com/Appdome/bitrise_build-2secure-android
-support_url: https://github.com/Appdome/bitrise_build-2secure-ios/issues
+support_url: https://github.com/Appdome/bitrise_build-2secure-android/issues
 
 # If this step should be available only for certain project types
 # just uncomment this `project_type_tags` section and include all the
