@@ -8,7 +8,7 @@
 # - Bitrise CLI guides: http://devcenter.bitrise.io/bitrise-cli/
 
 title: |-
-  Appdome-Build-2Secure step for Android
+  Appdome-Build-2Secure for Android
 summary: |
   Builds a mobile app using Appdome's platform
 description: |
