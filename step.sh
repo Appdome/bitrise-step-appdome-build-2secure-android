@@ -8,7 +8,7 @@
 # You can export Environment Variables for other Steps with
 #  envman, which is automatically installed by `bitrise setup`.
 # A very simple example:
-# nvman add e--key EXAMPLE_STEP_OUTPUT --value 'the value you want to share'
+# nvman add --key EXAMPLE_STEP_OUTPUT --value 'the value you want to share'
 # Envman can handle piped inputs, which is useful if the text you want to
 # share is complex and you don't want to deal with proper bash escaping:
 #  cat file_with_complex_input | envman add --KEY EXAMPLE_STEP_OUTPUT
@@ -44,9 +44,8 @@ else
 	app_file=$app_location
 fi
 # ls -al
-mkdir output
-certificate_output=../output/certificate.pdf
-output=../output/Appdome_$(basename $app_file)
+certificate_output=$BITRISE_DEPLOY_DIR/certificate.pdf
+secured_app_output=$BITRISE_DEPLOY_DIR/Appdome_$(basename $app_file)
 
 
 tm=""
@@ -78,7 +77,7 @@ case $sign_method in
 							--private_signing \
 							$gp \
 							$cf \
-							--output $output \
+							--output $secured_app_output \
 							--certificate_output $certificate_output 
 						;;
 "Auto-Dev-Signing")		echo "Auto Dev Signing"
@@ -89,7 +88,7 @@ case $sign_method in
 							--auto_dev_private_signing \
 							$gp \
 							$cf \
-							--output $output \
+							--output $secured_app_output \
 							--certificate_output $certificate_output 
 						;;
 "On-Appdome")			echo "On Appdome Signing"
@@ -108,12 +107,17 @@ case $sign_method in
 							$gp \
 							$cf \
 							--key_pass $key_pass \
-							--output $output \
+							--output $secured_app_output \
 							--certificate_output $certificate_output 
 						;;
 esac
 
-cd ../output
 # rm -rf appdome-api-bash
-# ls -al
-cp * $BITRISE_DEPLOY_DIR
+ls -al
+if [[ $secured_app_output == *.sh ]]; then
+	echo $secured_app_output | envman add --KEY APPDOME_PRIVATE_SIGN_SCRIPT_PATH
+else
+	echo $secured_app_output | envman add --KEY APPDOME_SECURED_IPA_PATH
+fi
+echo $certificate_output | envman add --KEY APPDOME_CERTIFICATE_PATH
+
