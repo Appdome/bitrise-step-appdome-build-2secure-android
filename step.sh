@@ -116,8 +116,9 @@ esac
 ls -al
 if [[ $secured_app_output == *.sh ]]; then
 	echo $secured_app_output | envman add --KEY APPDOME_PRIVATE_SIGN_SCRIPT_PATH
+elif [[ $secured_app_output == *.apk ]]; then
+	echo $secured_app_output | envman add --KEY APPDOME_SECURED_APK_PATH
 else
-	echo $secured_app_output | envman add --KEY APPDOME_SECURED_IPA_PATH
+	echo $secured_app_output | envman add --KEY APPDOME_SECURED_AAB_PATH
 fi
 echo $certificate_output | envman add --KEY APPDOME_CERTIFICATE_PATH
-
