@@ -119,6 +119,7 @@ cd $BITRISE_DEPLOY_DIR
 echo "aaa"
 pwd
 ls -al
+echo $secured_app_output
 if [[ $secured_app_output == *.sh ]]; then
 	echo $secured_app_output | envman add --KEY APPDOME_PRIVATE_SIGN_SCRIPT_PATH
 elif [[ $secured_app_output == *.apk ]]; then
