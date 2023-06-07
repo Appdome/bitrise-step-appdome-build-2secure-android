@@ -33,7 +33,7 @@ download_file() {
 export APPDOME_CLIENT_HEADER="Bitrise/1.0.0"
 
 if [[ -z $APPDOME_API_KEY ]]; then
-	echo 'No APPDOME_API_KEY was provided. Exiting.'
+	echo 'APPDOME_API_KEY must be provided as envVar. Exiting.'
 	exit 1
 fi
 
@@ -58,15 +58,23 @@ cd appdome-api-bash
 
 
 echo "Android platform detected"
-gp=""
-if [[ $gp_signing == "true" ]]; then
-	gp="--google_play_signing"
-fi
+
 
 cf=""
 if [[ -n $SIGN_FINGERPRINT ]]; then
 	cf="--signing_fingerprint ${SIGN_FINGERPRINT}"
 fi
+
+gp=""
+if [[ $gp_signing == "true" ]]; then
+	gp="--google_play_signing"
+	if [[ -z $GOOGLE_SIGN_FINGERPRINT ]]; then
+		echo "GOOGLE_SIGN_FINGERPRINT must be provided as envVar for Google Play signing. Exiting."
+		exit 1
+	fi
+	cf="--signing_fingerprint ${GOOGLE_SIGN_FINGERPRINT}"
+fi
+
 
 case $sign_method in
 "Private-Signing")		echo "Private Signing"
