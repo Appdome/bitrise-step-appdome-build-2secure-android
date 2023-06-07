@@ -129,5 +129,3 @@ else
 	echo $secured_app_output | envman add --key APPDOME_SECURED_AAB_PATH
 fi
 echo $certificate_output | envman add --key APPDOME_CERTIFICATE_PATH
-
-cp * $BITRISE_DEPLOY_DIR
