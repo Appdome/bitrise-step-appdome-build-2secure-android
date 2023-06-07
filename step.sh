@@ -33,7 +33,7 @@ download_file() {
 export APPDOME_CLIENT_HEADER="Bitrise/1.0.0"
 
 if [[ -z $APPDOME_API_KEY ]]; then
-	echo 'APPDOME_API_KEY must be provided as Secret. Exiting.'
+	echo 'APPDOME_API_KEY must be provided as a Secret. Exiting.'
 	exit 1
 fi
 
@@ -69,7 +69,7 @@ gp=""
 if [[ $gp_signing == "true" ]]; then
 	gp="--google_play_signing"
 	if [[ -z $GOOGLE_SIGN_FINGERPRINT ]]; then
-		echo "GOOGLE_SIGN_FINGERPRINT must be provided as Secret for Google Play signing. Exiting."
+		echo "GOOGLE_SIGN_FINGERPRINT must be provided as a Secret for Google Play signing. Exiting."
 		exit 1
 	fi
 	cf="--signing_fingerprint ${GOOGLE_SIGN_FINGERPRINT}"
