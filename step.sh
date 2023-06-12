@@ -75,6 +75,10 @@ if [[ $gp_signing == "true" ]]; then
 	cf="--signing_fingerprint ${GOOGLE_SIGN_FINGERPRINT}"
 fi
 
+bl=""
+if [[ $build_logs == "true" ]]; then
+	bl="-bl"
+fi
 
 case $sign_method in
 "Private-Signing")		echo "Private Signing"
@@ -85,6 +89,7 @@ case $sign_method in
 							--private_signing \
 							$gp \
 							$cf \
+							$bl \
 							--output $secured_app_output \
 							--certificate_output $certificate_output 
 						;;
@@ -96,6 +101,7 @@ case $sign_method in
 							--auto_dev_private_signing \
 							$gp \
 							$cf \
+							$bl \
 							--output $secured_app_output \
 							--certificate_output $certificate_output 
 						;;
@@ -114,6 +120,7 @@ case $sign_method in
 							--keystore_alias $keystore_alias \
 							$gp \
 							$cf \
+							$bl \
 							--key_pass $key_pass \
 							--output $secured_app_output \
 							--certificate_output $certificate_output 

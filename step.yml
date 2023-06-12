@@ -103,6 +103,15 @@ inputs:
         - "false"
         is_required: true
         
+    - build_logs: "false"
+      opts:
+        title: "Build with logs?"
+        description: "Build with diagnostic logs?"
+        value_options:
+        - "true"
+        - "false"
+        is_required: true
+        
    # - app_signing_cert: 
 #      opts:
 #        title: "Signing Fingerprint"
