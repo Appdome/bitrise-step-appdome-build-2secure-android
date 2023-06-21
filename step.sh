@@ -69,8 +69,13 @@ gp=""
 if [[ $gp_signing == "true" ]]; then
 	gp="--google_play_signing"
 	if [[ -z $GOOGLE_SIGN_FINGERPRINT ]]; then
-		echo "GOOGLE_SIGN_FINGERPRINT must be provided as a Secret for Google Play signing. Exiting."
-		exit 1
+		if [[ -z $SIGN_FINGERPRINT ]]; then
+			echo "GOOGLE_SIGN_FINGERPRINT must be provided as a Secret for Google Play signing. Exiting."
+			exit 1
+		else
+			echo "GOOGLE_SIGN_FINGERPRINT was not provided, will use SIGN_FINGERPRINT instead."
+			GOOGLE_SIGN_FINGERPRINT=$SIGN_FINGERPRINT
+		fi
 	fi
 	cf="--signing_fingerprint ${GOOGLE_SIGN_FINGERPRINT}"
 fi
