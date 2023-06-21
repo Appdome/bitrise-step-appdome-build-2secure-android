@@ -73,7 +73,7 @@ if [[ $gp_signing == "true" ]]; then
 			echo "GOOGLE_SIGN_FINGERPRINT must be provided as a Secret for Google Play signing. Exiting."
 			exit 1
 		else
-			echo "GOOGLE_SIGN_FINGERPRINT was not provided, will use SIGN_FINGERPRINT instead."
+			echo "GOOGLE_SIGN_FINGERPRINT was not provided, will be using SIGN_FINGERPRINT instead."
 			GOOGLE_SIGN_FINGERPRINT=$SIGN_FINGERPRINT
 		fi
 	fi
