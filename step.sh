@@ -136,12 +136,14 @@ echo "$secured_app_output aa"
 
 # rm -rf appdome-api-bash
 if [[ $secured_app_output == *.sh ]]; then
-	echo $secured_app_output | envman add --key APPDOME_PRIVATE_SIGN_SCRIPT_PATH
+	envman add --key APPDOME_PRIVATE_SIGN_SCRIPT_PATH --value $secured_app_output
+# 	echo $secured_app_output | envman add --key APPDOME_PRIVATE_SIGN_SCRIPT_PATH
 elif [[ $secured_app_output == *.apk ]]; then
-	echo $secured_app_output | envman add --key APPDOME_SECURED_APK_PATH
+	envman add --key APPDOME_SECURED_APK_PATH --value $secured_app_output
+# 	echo $secured_app_output | envman add --key APPDOME_SECURED_APK_PATH
 else
-	echo $secured_app_output | envman add --key APPDOME_SECURED_AAB_PATH
+	envman add --key APPDOME_SECURED_AAB_PATH --value $secured_app_output
+# 	echo $secured_app_output | envman add --key APPDOME_SECURED_AAB_PATH
 fi
-echo $certificate_output | envman add --key APPDOME_CERTIFICATE_PATH
-
-echo "$APPDOME_SECURED_AAB_PATH bb"
+envman add --key APPDOME_CERTIFICATE_PATH --value $certificate_output
+# echo $certificate_output | envman add --key APPDOME_CERTIFICATE_PATH
