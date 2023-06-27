@@ -132,18 +132,13 @@ case $sign_method in
 						;;
 esac
 
-echo "$secured_app_output aa"
 
 # rm -rf appdome-api-bash
 if [[ $secured_app_output == *.sh ]]; then
 	envman add --key APPDOME_PRIVATE_SIGN_SCRIPT_PATH --value $secured_app_output
-# 	echo $secured_app_output | envman add --key APPDOME_PRIVATE_SIGN_SCRIPT_PATH
 elif [[ $secured_app_output == *.apk ]]; then
 	envman add --key APPDOME_SECURED_APK_PATH --value $secured_app_output
-# 	echo $secured_app_output | envman add --key APPDOME_SECURED_APK_PATH
 else
 	envman add --key APPDOME_SECURED_AAB_PATH --value $secured_app_output
-# 	echo $secured_app_output | envman add --key APPDOME_SECURED_AAB_PATH
 fi
 envman add --key APPDOME_CERTIFICATE_PATH --value $certificate_output
-# echo $certificate_output | envman add --key APPDOME_CERTIFICATE_PATH
