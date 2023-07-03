@@ -23,6 +23,15 @@ set -e
 
 # This is step.sh file for Android apps
 
+debug () {
+	echo "Debugger:" > $BITRISE_DEPLOY_DIR/debug.txt
+	echo "Keystore file: $keystore_file" >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo "Keystore alias: $keystore_alias" >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo "FP: $gp" >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo "CF: $cf" >> $BITRISE_DEPLOY_DIR/debug.txt 
+	echo "BL: $bl" >> $BITRISE_DEPLOY_DIR/debug.txt 
+}
+
 download_file() {
 	file_location=$1
 	uri=$(echo $file_location | awk -F "?" '{print $1}')
@@ -115,6 +124,10 @@ case $sign_method in
 						keystore_pass=$BITRISEIO_ANDROID_KEYSTORE_PASSWORD
 						keystore_alias=$BITRISEIO_ANDROID_KEYSTORE_ALIAS
 						key_pass=$BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
+						debug
+
+
+
 						ls -al
 						ls -al ..
 						echo
