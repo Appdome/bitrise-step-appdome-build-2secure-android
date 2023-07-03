@@ -116,6 +116,7 @@ case $sign_method in
 						keystore_alias=$BITRISEIO_ANDROID_KEYSTORE_ALIAS
 						key_pass=$BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
 						ls -al
+						ls -al ..
 						echo
 						echo --api_key $APPDOME_API_KEY \
 							--app $app_file \
