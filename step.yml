@@ -8,14 +8,14 @@
 # - Bitrise CLI guides: http://devcenter.bitrise.io/bitrise-cli/
 
 title: |-
-  Appdome Build
+  Appdome-Build-2Secure for Android
 summary: |
   Builds a mobile app using Appdome's platform
 description: |
-  Integration that allows activating security and app protection features, bulding and signing mobile apps using Appdome's API.
-website: https://github.com/Appdome/bitrise_build-2secure-android
-source_code_url: https://github.com/Appdome/bitrise_build-2secure-android
-support_url: https://github.com/Appdome/bitrise_build-2secure-ios/issues
+  Integration that allows activating security and app protection features, building and signing mobile apps using Appdome's API. For details see: https://www.appdome.com/how-to/appsec-release-orchestration/mobile-appsec-cicd/use-appdome-build-2secure-step-for-bitrise
+website: https://github.com/Appdome/bitrise-step-appdome-build-2secure-android
+source_code_url: https://github.com/Appdome/bitrise-step-appdome-build-2secure-android
+support_url: https://github.com/Appdome/bitrise-step-appdome-build-2secure-android/issues
 
 # If this step should be available only for certain project types
 # just uncomment this `project_type_tags` section and include all the
@@ -55,11 +55,11 @@ type_tags:
 # You can find more information about this in the documentation here:
 # https://devcenter.bitrise.io/en/steps-and-workflows/developing-your-own-bitrise-step/developing-a-new-step.html#submodules-and-step-dependencies
 #
-# deps:
-#   brew:
-#   - name: cmake
-#   apt_get:
-#   - name: cmake
+deps:
+  brew:
+  - name: curl
+  apt_get:
+  - name: curl
 
 
 toolkit:
@@ -68,10 +68,10 @@ toolkit:
 
 
 inputs:
-    - app_location: $APP_LOCATION
+    - app_location:
       opts:
-        title: "App file URL"
-        summary: "URL to app file"
+        title: "App file URL or EnvVar"
+        summary: "URL to app file (apk/aab) or an EnvVar representing its path (i.e. $BITRISE_APK_PATH or $BITRISE_AAB_PATH)"
         is_required: true
         
     - fusion_set_id: 
@@ -94,12 +94,30 @@ inputs:
         - "Auto-Dev-Signing"
         is_required: true
         
-    - app_signing_cert: 
+    - gp_signing: "false"
       opts:
-        title: "GooglePlay Signing Fingerprint"
-        description: "Google Play signing SHA-1/SHA256 fingerprint (will be used if provided)"
-        is_required: false
+        title: "Google Play Signing?"
+        description: "Sign the app for Google Play? If 'true', requires $SIGN_FINGERPRINT in the Secrets tab."
+        value_options:
+        - "true"
+        - "false"
+        is_required: true
         
+    - build_logs: "false"
+      opts:
+        title: "Build With Diagnostic Logs"
+        description: "Build the app with Appdome's Diagnostic Logs"
+        value_options:
+        - "true"
+        - "false"
+        is_required: true
+        
+   # - app_signing_cert: 
+#      opts:
+#        title: "Signing Fingerprint"
+#        description: "Signing SHA-1/SHA-256 fingerprint"
+#        is_required: false
+#        
         
 #   - output_location: 
 #      opts:
@@ -121,13 +139,25 @@ inputs:
 #        value_options: []
 
 outputs:
-#
-#
-#  - EXAMPLE_STEP_OUTPUT:
-#    opts:
-#      title: "Example Step Output"
-#      summary: Summary. No more than 2-3 sentences.
-#      description: |
-#        Description of this output.
-#
-#        Can be Markdown formatted text.
+- APPDOME_SECURED_APK_PATH:  
+  opts:    
+    title: Secured .apk file path   
+    summary: Local path of the secured .apk file
+    description: |
+        Local path of the secured .apk file. Available when 'Signing Method' set to 'On-Appdome' or 'Private-Signing'
+- APPDOME_SECURED_AAB_PATH:  
+  opts:    
+    title: Secured .aab file path   
+    summary: Local path of the secured .aab file
+    description: |
+        Local path of the secured .aab file. Available when 'Signing Method' set to 'On-Appdome' or 'Private-Signing'
+- APPDOME_PRIVATE_SIGN_SCRIPT_PATH:  
+  opts:    
+    title: .sh sign script file path   
+    summary: Local path of the .sh sign script file
+    description: |
+        Local path of the .sh sign script file. Available when 'Signing Method' set to 'Auto-Dev-Signing'
+- APPDOME_CERTIFICATE_PATH:  
+  opts:    
+    title: Certified Secure Certificate .pdf file path   
+    summary: Local path of the Certified Secure Certificate .pdf file

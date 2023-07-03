@@ -1,5 +1,5 @@
 #!/bin/bash
-# set -ex
+set -e
 
 # echo "This is the value specified for the input 'example_step_input': ${example_step_input}"
 
@@ -8,7 +8,7 @@
 # You can export Environment Variables for other Steps with
 #  envman, which is automatically installed by `bitrise setup`.
 # A very simple example:
-# nvman add e--key EXAMPLE_STEP_OUTPUT --value 'the value you want to share'
+# nvman add --key EXAMPLE_STEP_OUTPUT --value 'the value you want to share'
 # Envman can handle piped inputs, which is useful if the text you want to
 # share is complex and you don't want to deal with proper bash escaping:
 #  cat file_with_complex_input | envman add --KEY EXAMPLE_STEP_OUTPUT
@@ -27,11 +27,15 @@ download_file() {
 	file_location=$1
 	uri=$(echo $file_location | awk -F "?" '{print $1}')
 	downloaded_file=$(basename $uri)
-	curl $file_location --output $downloaded_file && echo $downloaded_file
+	curl -L $file_location --output $downloaded_file && echo $downloaded_file
 }
 
 export APPDOME_CLIENT_HEADER="Bitrise/1.0.0"
 
+if [[ -z $APPDOME_API_KEY ]]; then
+	echo 'APPDOME_API_KEY must be provided as a Secret. Exiting.'
+	exit 1
+fi
 
 if [[ $app_location == *"http"* ]];
 then
@@ -39,10 +43,9 @@ then
 else
 	app_file=$app_location
 fi
-
-mkdir output
-certificate_output=../output/certificate.pdf
-output=../output/Appdome_$(basename $app_file)
+# ls -al
+certificate_output=$BITRISE_DEPLOY_DIR/certificate.pdf
+secured_app_output=$BITRISE_DEPLOY_DIR/Appdome_$(basename $app_file)
 
 
 tm=""
@@ -50,15 +53,38 @@ if [[ -n $team_id ]]; then
 	tm="--team_id ${team_id}"
 fi
 
-git clone https://github.com/Appdome/appdome-api-bash.git
+git clone https://github.com/Appdome/appdome-api-bash.git > /dev/null
 cd appdome-api-bash
 
 
-echo "Android platform detected"	
-gs=""
-if [[ -n $app_signing_cert ]]; then
-	gs="--google_play_signing ${app_signing_cert}"
+echo "Android platform detected"
+
+
+cf=""
+if [[ -n $SIGN_FINGERPRINT ]]; then
+	cf="--signing_fingerprint ${SIGN_FINGERPRINT}"
 fi
+
+gp=""
+if [[ $gp_signing == "true" ]]; then
+	gp="--google_play_signing"
+	if [[ -z $GOOGLE_SIGN_FINGERPRINT ]]; then
+		if [[ -z $SIGN_FINGERPRINT ]]; then
+			echo "GOOGLE_SIGN_FINGERPRINT must be provided as a Secret for Google Play signing. Exiting."
+			exit 1
+		else
+			echo "GOOGLE_SIGN_FINGERPRINT was not provided, will be using SIGN_FINGERPRINT instead."
+			GOOGLE_SIGN_FINGERPRINT=$SIGN_FINGERPRINT
+		fi
+	fi
+	cf="--signing_fingerprint ${GOOGLE_SIGN_FINGERPRINT}"
+fi
+
+bl=""
+if [[ $build_logs == "true" ]]; then
+	bl="-bl"
+fi
+
 case $sign_method in
 "Private-Signing")		echo "Private Signing"
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
@@ -66,9 +92,10 @@ case $sign_method in
 							--fusion_set_id $fusion_set_id \
 							$tm \
 							--private_signing \
-							--signing_fingerprint $SIGN_FINGERPRINT \
-							$gs \
-							--output $output \
+							$gp \
+							$cf \
+							$bl \
+							--output $secured_app_output \
 							--certificate_output $certificate_output 
 						;;
 "Auto-Dev-Signing")		echo "Auto Dev Signing"
@@ -77,9 +104,10 @@ case $sign_method in
 							--fusion_set_id $fusion_set_id \
 							$tm \
 							--auto_dev_private_signing \
-							--signing_fingerprint $SIGN_FINGERPRINT \
-							$gs \
-							--output $output \
+							$gp \
+							$cf \
+							$bl \
+							--output $secured_app_output \
 							--certificate_output $certificate_output 
 						;;
 "On-Appdome")			echo "On Appdome Signing"
@@ -95,14 +123,22 @@ case $sign_method in
 							--keystore $keystore_file \
 							--keystore_pass $keystore_pass \
 							--keystore_alias $keystore_alias \
-							$gs \
+							$gp \
+							$cf \
+							$bl \
 							--key_pass $key_pass \
-							--output $output \
+							--output $secured_app_output \
 							--certificate_output $certificate_output 
 						;;
 esac
 
-cd ../output
+
 # rm -rf appdome-api-bash
-ls -al
-cp * $BITRISE_DEPLOY_DIR
+if [[ $secured_app_output == *.sh ]]; then
+	envman add --key APPDOME_PRIVATE_SIGN_SCRIPT_PATH --value $secured_app_output
+elif [[ $secured_app_output == *.apk ]]; then
+	envman add --key APPDOME_SECURED_APK_PATH --value $secured_app_output
+else
+	envman add --key APPDOME_SECURED_AAB_PATH --value $secured_app_output
+fi
+envman add --key APPDOME_CERTIFICATE_PATH --value $certificate_output
