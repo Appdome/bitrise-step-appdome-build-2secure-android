@@ -56,9 +56,7 @@ fi
 git clone https://github.com/Appdome/appdome-api-bash.git > /dev/null
 cd appdome-api-bash
 
-
 echo "Android platform detected"
-
 
 sf=""
 if [[ -n $fingerprint ]]; then
