@@ -121,12 +121,12 @@ case $sign_method in
 							$tm \
 							--sign_on_appdome \
 							--keystore $keystore_file \
-							--keystore_pass \"$keystore_pass\" \
-							--keystore_alias \"$keystore_alias\" \
+							--keystore_pass $keystore_pass \
+							--keystore_alias $keystore_alias \
 							$gp \
 							$sf \
 							$bl \
-							--key_pass \"$key_pass\" \
+							--key_pass $key_pass \
 							--output $secured_app_output \
 							--certificate_output $certificate_output 
 						;;
