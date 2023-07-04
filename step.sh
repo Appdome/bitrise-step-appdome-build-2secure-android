@@ -93,7 +93,7 @@ case $sign_method in
 							$gp \
 							$sf \
 							$bl \
-							--output $secured_app_output \
+							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
 "Auto-Dev-Signing")		echo "Auto Dev Signing"
@@ -105,7 +105,7 @@ case $sign_method in
 							$gp \
 							$sf \
 							$bl \
-							--output $secured_app_output \
+							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
 "On-Appdome")			echo "On Appdome Signing"
@@ -118,13 +118,13 @@ case $sign_method in
 							--fusion_set_id $fusion_set_id \
 							$tm \
 							--sign_on_appdome \
-							--keystore $keystore_file \
-							--keystore_pass $keystore_pass \
-							--keystore_alias $keystore_alias \
+							--keystore "$keystore_file" \
+							--keystore_pass "$keystore_pass" \
+							--keystore_alias "$keystore_alias" \
 							$gp \
 							$bl \
-							--key_pass $key_pass \
-							--output $secured_app_output \
+							--key_pass "$key_pass" \
+							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
 esac
