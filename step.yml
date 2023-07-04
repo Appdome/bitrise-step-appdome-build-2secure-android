@@ -103,6 +103,23 @@ inputs:
         - "false"
         is_required: true
         
+    - google_fingerprint: $GOOGLE_SIGN_FINGERPRINT
+      opts:
+        title: "Google Sign Fingerprint"
+        description: "Enter here Google sign fingerprint for Google Play singing, or enter its secret variable name."
+        is_required: false
+
+    - fingerprint: $SIGN_FINGERPRINT
+      opts:
+        title: "Sign Fingerprint"
+        description: "Enter here sign fingerprint (not for Google Play singing), or enter its secret variable name."
+        is_required: false
+
+    - fusion_set_id: 
+      opts:
+        title: "Fusion set ID"
+        is_required: true
+
     - build_logs: "false"
       opts:
         title: "Build With Diagnostic Logs"

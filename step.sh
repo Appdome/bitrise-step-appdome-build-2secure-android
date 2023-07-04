@@ -60,24 +60,24 @@ cd appdome-api-bash
 echo "Android platform detected"
 
 
-cf=""
-if [[ -n $SIGN_FINGERPRINT ]]; then
-	cf="--signing_fingerprint ${SIGN_FINGERPRINT}"
+sf=""
+if [[ -n $fingerprint ]]; then
+	sf="--signing_fingerprint ${fingerprint}"
 fi
 
 gp=""
 if [[ $gp_signing == "true" ]]; then
 	gp="--google_play_signing"
-	if [[ -z $GOOGLE_SIGN_FINGERPRINT ]]; then
-		if [[ -z $SIGN_FINGERPRINT ]]; then
+	if [[ -z $google_fingerprint ]]; then
+		if [[ -z $fingerprint ]]; then
 			echo "GOOGLE_SIGN_FINGERPRINT must be provided as a Secret for Google Play signing. Exiting."
 			exit 1
 		else
-			echo "GOOGLE_SIGN_FINGERPRINT was not provided, will be using SIGN_FINGERPRINT instead."
-			GOOGLE_SIGN_FINGERPRINT=$SIGN_FINGERPRINT
+			echo "Google Sign Fingerprint was not provided, will be using Sign Fringerprint instead."
+			google_fingerprint=$fingerprint
 		fi
 	fi
-	cf="--signing_fingerprint ${GOOGLE_SIGN_FINGERPRINT}"
+	sf="--signing_fingerprint ${google_fingerprint}"
 fi
 
 bl=""
@@ -93,7 +93,7 @@ case $sign_method in
 							$tm \
 							--private_signing \
 							$gp \
-							$cf \
+							$sf \
 							$bl \
 							--output $secured_app_output \
 							--certificate_output $certificate_output 
@@ -105,7 +105,7 @@ case $sign_method in
 							$tm \
 							--auto_dev_private_signing \
 							$gp \
-							$cf \
+							$sf \
 							$bl \
 							--output $secured_app_output \
 							--certificate_output $certificate_output 
@@ -121,12 +121,12 @@ case $sign_method in
 							$tm \
 							--sign_on_appdome \
 							--keystore $keystore_file \
-							--keystore_pass $keystore_pass \
-							--keystore_alias $keystore_alias \
+							--keystore_pass \"$keystore_pass\" \
+							--keystore_alias \"$keystore_alias\" \
 							$gp \
-							$cf \
+							$sf \
 							$bl \
-							--key_pass $key_pass \
+							--key_pass \"$key_pass\" \
 							--output $secured_app_output \
 							--certificate_output $certificate_output 
 						;;
