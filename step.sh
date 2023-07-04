@@ -23,6 +23,25 @@ set -e
 
 # This is step.sh file for Android apps
 
+print_all_params() {
+	echo "Appdome Build-2Secure parameters:"
+	echo "App location: $app_location"
+	echo "Appdome API key: $APPDOME_API_KEY"
+	echo "Fusion set ID: $fusion_set_id"
+	echo "Team ID: $team_id"
+	echo "Sign Method: $sign_method"
+	echo "Keystore file: $keystore_file" 
+	echo "Keystore alias: $keystore_alias" 
+	echo "Google Play Singing?: $gp_signing"
+	echo "Google Fingerprint: $google_fingerprint" 
+	echo "Sign Fingerprint: $fingerprint"
+	echo "GP: $gp"
+	echo "SF: $sf"
+	echo "Build with test: $build_logs" 
+	echo "Secured app output: $secured_app_output"
+	echo "-----------------------------------------"
+}
+
 download_file() {
 	file_location=$1
 	uri=$(echo $file_location | awk -F "?" '{print $1}')
@@ -84,7 +103,9 @@ if [[ $build_logs == "true" ]]; then
 fi
 
 case $sign_method in
-"Private-Signing")		echo "Private Signing"
+"Private-Signing")		
+						print_all_params
+						echo "Private Signing"
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
 							--app $app_file \
 							--fusion_set_id $fusion_set_id \
@@ -96,7 +117,9 @@ case $sign_method in
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
-"Auto-Dev-Signing")		echo "Auto Dev Signing"
+"Auto-Dev-Signing")		
+						print_all_params
+						echo "Auto Dev Signing"
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
 							--app $app_file \
 							--fusion_set_id $fusion_set_id \
@@ -108,11 +131,13 @@ case $sign_method in
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
-"On-Appdome")			echo "On Appdome Signing"
+"On-Appdome")			
 						keystore_file=$(download_file $BITRISEIO_ANDROID_KEYSTORE_URL)
 						keystore_pass=$BITRISEIO_ANDROID_KEYSTORE_PASSWORD
 						keystore_alias=$BITRISEIO_ANDROID_KEYSTORE_ALIAS
 						key_pass=$BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
+						print_all_params
+						echo "On Appdome Signing"
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
 							--app $app_file \
 							--fusion_set_id $fusion_set_id \
