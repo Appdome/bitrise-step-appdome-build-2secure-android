@@ -50,6 +50,20 @@ debug () {
 		--certificate_output $certificate_output >> $BITRISE_DEPLOY_DIR/debug.txt
 }
 
+print_all_params() {
+	echo "App location: $app_location"
+	echo "Team ID: $team_id"
+	echo "Sign Method: $sign_method"
+	echo "Keystore file: $keystore_file" 
+	echo "Keystore alias: $keystore_alias" 
+	echo "Google Play Singing: $gp_signing"
+	echo "Google Fingerprint: $GOOGLE_SIGN_FINGERPRINT" 
+	echo "Sign Fingerprint: $SIGN_FINGERPRINT"
+	echo "GP: $gp"
+	echo "CF: $cf"
+	echo "Build with test: $bl" 
+}
+
 download_file() {
 	file_location=$1
 	uri=$(echo $file_location | awk -F "?" '{print $1}')
@@ -111,6 +125,8 @@ bl=""
 if [[ $build_logs == "true" ]]; then
 	bl="-bl"
 fi
+
+print_all_params
 
 case $sign_method in
 "Private-Signing")		echo "Private Signing"
