@@ -65,7 +65,6 @@ fi
 
 gp=""
 if [[ $gp_signing == "true" ]]; then
-	gp="--google_play_signing"
 	if [[ -z $google_fingerprint ]]; then
 		if [[ -z $fingerprint ]]; then
 			echo "Google Sign Fingerprint must be provided for Google Play signing. Exiting."
@@ -75,7 +74,8 @@ if [[ $gp_signing == "true" ]]; then
 			google_fingerprint=$fingerprint
 		fi
 	fi
-	sf="--signing_fingerprint ${google_fingerprint}"
+	gp="--google_play_signing --signing_fingerprint ${google_fingerprint}"
+	sf=""
 fi
 
 bl=""
@@ -122,7 +122,6 @@ case $sign_method in
 							--keystore_pass $keystore_pass \
 							--keystore_alias $keystore_alias \
 							$gp \
-							$sf \
 							$bl \
 							--key_pass $key_pass \
 							--output $secured_app_output \

@@ -102,20 +102,21 @@ inputs:
         - "true"
         - "false"
         is_required: true
+        category: Google Signing
         
     - google_fingerprint: $GOOGLE_SIGN_FINGERPRINT
       opts:
         title: "Google Sign Fingerprint"
         description: "Google Sign Fingerprint for Google Play singing, or its Secret variable name."
         is_required: false
-        category: Signing Fingerprints
+        category: Google Signing
 
     - fingerprint: $SIGN_FINGERPRINT
       opts:
         title: "Sign Fingerprint"
         description: "Sign Fingerprint (not for Google Play singing), or its Secret variable name."
         is_required: false
-        category: Signing Fingerprints
+        category: Private/Auto-Dev Signing
 
     - build_logs: "false"
       opts:
