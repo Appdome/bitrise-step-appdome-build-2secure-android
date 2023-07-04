@@ -30,6 +30,24 @@ debug () {
 	echo "FP: $gp" >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo "CF: $cf" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "BL: $bl" >> $BITRISE_DEPLOY_DIR/debug.txt 
+
+	ls -al >> $BITRISE_DEPLOY_DIR/debug.txt
+	ls -al .. >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo --api_key $APPDOME_API_KEY \
+		--app $app_file \
+		--fusion_set_id $fusion_set_id \
+		$tm \
+		--sign_on_appdome \
+		--keystore $keystore_file \
+		--keystore_pass $keystore_pass \
+		--keystore_alias $keystore_alias \
+		$gp \
+		$cf \
+		$bl \
+		--key_pass $key_pass \
+		--output $secured_app_output \
+		--certificate_output $certificate_output >> $BITRISE_DEPLOY_DIR/debug.txt
 }
 
 download_file() {
@@ -125,26 +143,6 @@ case $sign_method in
 						keystore_alias=$BITRISEIO_ANDROID_KEYSTORE_ALIAS
 						key_pass=$BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
 						debug
-
-
-
-						ls -al
-						ls -al ..
-						echo
-						echo --api_key $APPDOME_API_KEY \
-							--app $app_file \
-							--fusion_set_id $fusion_set_id \
-							$tm \
-							--sign_on_appdome \
-							--keystore $keystore_file \
-							--keystore_pass $keystore_pass \
-							--keystore_alias $keystore_alias \
-							$gp \
-							$cf \
-							$bl \
-							--key_pass $key_pass \
-							--output $secured_app_output \
-							--certificate_output $certificate_output 
 						
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
 							--app $app_file \
