@@ -126,8 +126,6 @@ if [[ $build_logs == "true" ]]; then
 	bl="-bl"
 fi
 
-print_all_params
-
 case $sign_method in
 "Private-Signing")		echo "Private Signing"
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
@@ -158,6 +156,7 @@ case $sign_method in
 						keystore_pass=$BITRISEIO_ANDROID_KEYSTORE_PASSWORD
 						keystore_alias=$BITRISEIO_ANDROID_KEYSTORE_ALIAS
 						key_pass=$BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
+						print_all_params
 						debug
 						
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
