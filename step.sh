@@ -23,22 +23,48 @@ set -e
 
 # This is step.sh file for Android apps
 
+debug () {
+	echo "Debugger:" > $BITRISE_DEPLOY_DIR/debug.txt
+	echo "Keystore file: $keystore_file" >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo "Keystore alias: $keystore_alias" >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo "FP: $gp" >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo "CF: $cf" >> $BITRISE_DEPLOY_DIR/debug.txt 
+	echo "BL: $bl" >> $BITRISE_DEPLOY_DIR/debug.txt 
+
+	ls -al >> $BITRISE_DEPLOY_DIR/debug.txt
+	ls -al .. >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo --api_key $APPDOME_API_KEY \
+		--app $app_file \
+		--fusion_set_id $fusion_set_id \
+		$tm \
+		--sign_on_appdome \
+		--keystore $keystore_file \
+		--keystore_pass $keystore_pass \
+		--keystore_alias $keystore_alias \
+		$gp \
+		$cf \
+		$bl \
+		--key_pass $key_pass \
+		--output $secured_app_output \
+		--certificate_output $certificate_output >> $BITRISE_DEPLOY_DIR/debug.txt
+}
+
 print_all_params() {
 	echo "Appdome Build-2Secure parameters:"
+	echo "=================================="
 	echo "App location: $app_location"
-	echo "Appdome API key: $APPDOME_API_KEY"
-	echo "Fusion set ID: $fusion_set_id"
 	echo "Team ID: $team_id"
 	echo "Sign Method: $sign_method"
 	echo "Keystore file: $keystore_file" 
 	echo "Keystore alias: $keystore_alias" 
-	echo "Google Play Singing?: $gp_signing"
-	echo "Google Fingerprint: $google_fingerprint" 
-	echo "Sign Fingerprint: $fingerprint"
-	echo "GP: $gp"
-	echo "SF: $sf"
-	echo "Build with test: $build_logs" 
+	echo "Google Play Singing: $gp_signing"
+	echo "Google Fingerprint: $GOOGLE_SIGN_FINGERPRINT" 
+	echo "Sign Fingerprint: $SIGN_FINGERPRINT"
+	echo "Build with logs: $build_logs" 
+	echo "Build to test: $build_to_test" 
 	echo "Secured app output: $secured_app_output"
+	echo "Certificate output: $certificate_output"
 	echo "-----------------------------------------"
 }
 
@@ -50,6 +76,24 @@ download_file() {
 }
 
 export APPDOME_CLIENT_HEADER="Bitrise/1.0.0"
+echo "Internal version: a-1.0.14"
+
+args="$@"
+i=1
+for arg in ${args[@]}
+do
+	args[i]=$arg
+   	i=$((i+1))
+done
+
+app_location=${args[1]}
+fusion_set_id=${args[2]}
+team_id=${args[3]}
+sign_method=${args[4]}
+gp_signing=${args[5]}
+build_logs=${args[6]}
+build_to_test=${args[7]}
+build_to_test=$(echo "$build_to_test" | tr '[:upper:]' '[:lower:]')
 
 if [[ -z $APPDOME_API_KEY ]]; then
 	echo 'APPDOME_API_KEY must be provided as a Secret. Exiting.'
@@ -62,13 +106,14 @@ then
 else
 	app_file=$app_location
 fi
-# ls -al
+
 certificate_output=$BITRISE_DEPLOY_DIR/certificate.pdf
 secured_app_output=$BITRISE_DEPLOY_DIR/Appdome_$(basename $app_file)
 
-
-tm=""
-if [[ -n $team_id ]]; then
+if [[ $team_id == "_@_" ]]; then
+	team_id=""
+	tm=""
+else
 	tm="--team_id ${team_id}"
 fi
 
@@ -77,24 +122,24 @@ cd appdome-api-bash
 
 echo "Android platform detected"
 
-sf=""
-if [[ -n $fingerprint ]]; then
-	sf="--signing_fingerprint ${fingerprint}"
+cf=""
+if [[ -n $SIGN_FINGERPRINT ]]; then
+	cf="--signing_fingerprint ${SIGN_FINGERPRINT}"
 fi
 
 gp=""
 if [[ $gp_signing == "true" ]]; then
-	if [[ -z $google_fingerprint ]]; then
-		if [[ -z $fingerprint ]]; then
-			echo "Google Sign Fingerprint must be provided for Google Play signing. Exiting."
+	gp="--google_play_signing"
+	if [[ -z $GOOGLE_SIGN_FINGERPRINT ]]; then
+		if [[ -z $SIGN_FINGERPRINT ]]; then
+			echo "GOOGLE_SIGN_FINGERPRINT must be provided as a Secret for Google Play signing. Exiting."
 			exit 1
 		else
-			echo "Google Sign Fingerprint was not provided, will be using Sign Fringerprint instead."
-			google_fingerprint=$fingerprint
+			echo "GOOGLE_SIGN_FINGERPRINT was not provided, will be using SIGN_FINGERPRINT instead."
+			GOOGLE_SIGN_FINGERPRINT=$SIGN_FINGERPRINT
 		fi
 	fi
-	gp="--google_play_signing --signing_fingerprint ${google_fingerprint}"
-	sf=""
+	cf="--signing_fingerprint ${GOOGLE_SIGN_FINGERPRINT}"
 fi
 
 bl=""
@@ -102,52 +147,60 @@ if [[ $build_logs == "true" ]]; then
 	bl="-bl"
 fi
 
+btv=""
+if [[ $build_to_test != "none" ]]; then
+	btv="--build_to_test_vendor  $build_to_test"
+fi
+
 case $sign_method in
-"Private-Signing")		
+"Private-Signing")		echo "Private Signing"
 						print_all_params
-						echo "Private Signing"
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
 							--app $app_file \
 							--fusion_set_id $fusion_set_id \
 							$tm \
 							--private_signing \
 							$gp \
-							$sf \
+							$cf \
 							$bl \
+							$btv \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
-"Auto-Dev-Signing")		
+"Auto-Dev-Signing")		echo "Auto Dev Signing"
 						print_all_params
-						echo "Auto Dev Signing"
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
 							--app $app_file \
 							--fusion_set_id $fusion_set_id \
 							$tm \
 							--auto_dev_private_signing \
 							$gp \
-							$sf \
+							$cf \
 							$bl \
+							$btv \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
-"On-Appdome")			
+"On-Appdome")			echo "On Appdome Signing"
 						keystore_file=$(download_file $BITRISEIO_ANDROID_KEYSTORE_URL)
 						keystore_pass=$BITRISEIO_ANDROID_KEYSTORE_PASSWORD
 						keystore_alias=$BITRISEIO_ANDROID_KEYSTORE_ALIAS
 						key_pass=$BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
 						print_all_params
-						echo "On Appdome Signing"
+						debug
+						
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
 							--app $app_file \
 							--fusion_set_id $fusion_set_id \
 							$tm \
 							--sign_on_appdome \
-							--keystore "$keystore_file" \
+							--keystore $keystore_file \
 							--keystore_pass "$keystore_pass" \
 							--keystore_alias "$keystore_alias" \
 							$gp \
+							$cf \
 							$bl \
+							$btv \
 							--key_pass "$key_pass" \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
