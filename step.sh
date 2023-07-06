@@ -75,8 +75,10 @@ download_file() {
 	curl -L $file_location --output $downloaded_file && echo $downloaded_file
 }
 
+internal_version="a-1.0.14"
+
 export APPDOME_CLIENT_HEADER="Bitrise/1.0.0"
-echo "Internal version: a-1.0.14"
+echo "Internal version: $internal_version"
 
 args="$@"
 i=1
