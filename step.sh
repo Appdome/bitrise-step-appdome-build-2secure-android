@@ -153,7 +153,7 @@ fi
 
 bl=""
 if [[ $build_logs == "true" ]]; then
-	bl="-bl"
+	bl="--build_logs"
 fi
 
 btv=""
