@@ -30,6 +30,7 @@ debug () {
 	echo "FP: $gp" >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo "CF: $cf" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "BL: $bl" >> $BITRISE_DEPLOY_DIR/debug.txt 
+	echo "SO: $so" >> $BITRISE_DEPLOY_DIR/debug.txt 
 
 	ls -al >> $BITRISE_DEPLOY_DIR/debug.txt
 	ls -al .. >> $BITRISE_DEPLOY_DIR/debug.txt
@@ -89,7 +90,7 @@ google_fingerprint=$6
 fingerprint=$7
 build_logs=$8
 build_to_test=$9
-secondary_output=$10
+secondary_output=${10}
 build_to_test=$(echo "$build_to_test" | tr '[:upper:]' '[:lower:]')
 
 if [[ -z $APPDOME_API_KEY ]]; then
@@ -125,7 +126,6 @@ git clone https://github.com/Appdome/appdome-api-bash.git > /dev/null
 cd appdome-api-bash
 
 echo "Android platform detected"
-echo "Secondary output: $secondary_output"
 
 sf=""
 if [[ -n $fingerprint ]]; then
