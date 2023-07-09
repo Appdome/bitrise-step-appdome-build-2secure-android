@@ -76,25 +76,16 @@ download_file() {
 }
 
 internal_version="a-1.0.14"
-
-export APPDOME_CLIENT_HEADER="Bitrise/1.0.0"
 echo "Internal version: $internal_version"
+export APPDOME_CLIENT_HEADER="Bitrise/1.0.0"
 
-args="$@"
-i=1
-for arg in ${args[@]}
-do
-	args[i]=$arg
-   	i=$((i+1))
-done
-
-app_location=${args[1]}
-fusion_set_id=${args[2]}
-team_id=${args[3]}
-sign_method=${args[4]}
-gp_signing=${args[5]}
-build_logs=${args[6]}
-build_to_test=${args[7]}
+app_location=$1
+fusion_set_id=$2
+team_id=$3
+sign_method=$4
+gp_signing=$5
+build_logs=$6
+build_to_test=$7
 build_to_test=$(echo "$build_to_test" | tr '[:upper:]' '[:lower:]')
 
 if [[ -z $APPDOME_API_KEY ]]; then
