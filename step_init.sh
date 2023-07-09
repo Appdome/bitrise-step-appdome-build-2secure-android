@@ -48,6 +48,7 @@ fi
 branch="main"
 if [[ -n $APPDOME_BRANCH_ANDROID ]]; then
     branch=$APPDOME_BRANCH_ANDROID
+fi
 
 # step execusion
 git clone --branch $branch https://github.com/Appdome/bitrise-step-appdome-build-2secure-android.git # > /dev/null
