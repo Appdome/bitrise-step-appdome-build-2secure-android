@@ -28,8 +28,9 @@ debug () {
 	echo "Keystore file: $keystore_file" >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo "Keystore alias: $keystore_alias" >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo "FP: $gp" >> $BITRISE_DEPLOY_DIR/debug.txt
-	echo "CF: $cf" >> $BITRISE_DEPLOY_DIR/debug.txt 
+	echo "SF: $sf" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "BL: $bl" >> $BITRISE_DEPLOY_DIR/debug.txt 
+	echo "BTV: $btv" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "SO: $so" >> $BITRISE_DEPLOY_DIR/debug.txt 
 
 	ls -al >> $BITRISE_DEPLOY_DIR/debug.txt
@@ -44,8 +45,10 @@ debug () {
 		--keystore_pass $keystore_pass \
 		--keystore_alias $keystore_alias \
 		$gp \
-		$cf \
+		$sf \
 		$bl \
+		$btv \
+		$so \
 		--key_pass $key_pass \
 		--output $secured_app_output \
 		--certificate_output $certificate_output >> $BITRISE_DEPLOY_DIR/debug.txt
@@ -108,8 +111,6 @@ fi
 so=""
 secured_so_app_output="none"
 extension=${app_file##*.}
-echo "--------------> $extension"
-echo "--------------> $secondary_output"
 if [[ $extension == "aab" && $secondary_output == "true" ]]; then
 	secured_so_app_output="$BITRISE_DEPLOY_DIR/Appdome_Universal.apk"
 	so="-so $secured_so_app_output"
