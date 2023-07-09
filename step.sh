@@ -66,7 +66,7 @@ print_all_params() {
 	echo "Build to test: $build_to_test" 
 	echo "Secured app output: $secured_app_output"
 	echo "Certificate output: $certificate_output"
-	echo "Secondary output: $secondary_output"
+	echo "Secondary output: $secured_so_app_output"
 	echo "-----------------------------------------"
 }
 
@@ -106,6 +106,7 @@ else
 fi
 
 so=""
+secured_so_app_output="none"
 extension=”${app_file##*.}”
 if [[ $extension == "aab" && $secondary_output == "true" ]]; then
 	secured_so_app_output="$BITRISE_DEPLOY_DIR/Appdome_Universal.apk"
