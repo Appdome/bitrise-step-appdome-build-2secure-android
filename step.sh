@@ -65,6 +65,7 @@ print_all_params() {
 	echo "Build to test: $build_to_test" 
 	echo "Secured app output: $secured_app_output"
 	echo "Certificate output: $certificate_output"
+	echo "Secondary output: $secondary_output"
 	echo "-----------------------------------------"
 }
 
@@ -88,6 +89,7 @@ google_fingerprint=$6
 fingerprint=$7
 build_logs=$8
 build_to_test=$9
+secondary_output=$10
 build_to_test=$(echo "$build_to_test" | tr '[:upper:]' '[:lower:]')
 
 if [[ -z $APPDOME_API_KEY ]]; then
@@ -100,6 +102,13 @@ then
 	app_file=../$(download_file $app_location)
 else
 	app_file=$app_location
+fi
+
+so=""
+extension=”${app_file##*.}”
+if [[ $extension == "aab" && $secondary_output == "true" ]]; then
+	secured_so_app_output="$BITRISE_DEPLOY_DIR/universal.apk"
+	so="-so $secured_so_app_output"
 fi
 
 certificate_output=$BITRISE_DEPLOY_DIR/certificate.pdf
@@ -160,6 +169,7 @@ case $sign_method in
 							$sf \
 							$bl \
 							$btv \
+							$so \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
@@ -175,6 +185,7 @@ case $sign_method in
 							$sf \
 							$bl \
 							$btv \
+							$so \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
@@ -196,6 +207,7 @@ case $sign_method in
 							$gp \
 							$bl \
 							$btv \
+							$so \
 							--key_pass "$key_pass" \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
@@ -210,5 +222,8 @@ elif [[ $secured_app_output == *.apk ]]; then
 	envman add --key APPDOME_SECURED_APK_PATH --value $secured_app_output
 else
 	envman add --key APPDOME_SECURED_AAB_PATH --value $secured_app_output
+	if [[ -n $so ]]; then
+		envman add --key APPDOME_SECURED_SO_PATH --value $secured_so_app_output
+	fi
 fi
 envman add --key APPDOME_CERTIFICATE_PATH --value $certificate_output
