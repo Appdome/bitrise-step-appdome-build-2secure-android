@@ -113,7 +113,7 @@ secured_so_app_output="none"
 extension=${app_file##*.}
 if [[ $extension == "aab" && $secondary_output == "true" ]]; then
 	secured_so_app_output="$BITRISE_DEPLOY_DIR/Appdome_Universal.apk"
-	so="-so $secured_so_app_output"
+	so="--second_output $secured_so_app_output"
 fi
 
 certificate_output=$BITRISE_DEPLOY_DIR/certificate.pdf
