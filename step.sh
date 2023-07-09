@@ -84,8 +84,10 @@ fusion_set_id=$2
 team_id=$3
 sign_method=$4
 gp_signing=$5
-build_logs=$6
-build_to_test=$7
+google_fingerprint=$6
+fingerprint=$7
+build_logs=$8
+build_to_test=$9
 build_to_test=$(echo "$build_to_test" | tr '[:upper:]' '[:lower:]')
 
 if [[ -z $APPDOME_API_KEY ]]; then
@@ -115,24 +117,24 @@ cd appdome-api-bash
 
 echo "Android platform detected"
 
-cf=""
-if [[ -n $SIGN_FINGERPRINT ]]; then
-	cf="--signing_fingerprint ${SIGN_FINGERPRINT}"
+sf=""
+if [[ -n $fingerprint ]]; then
+	sf="--signing_fingerprint ${fingerprint}"
 fi
 
 gp=""
 if [[ $gp_signing == "true" ]]; then
-	gp="--google_play_signing"
-	if [[ -z $GOOGLE_SIGN_FINGERPRINT ]]; then
-		if [[ -z $SIGN_FINGERPRINT ]]; then
-			echo "GOOGLE_SIGN_FINGERPRINT must be provided as a Secret for Google Play signing. Exiting."
+	if [[ -z $google_fingerprint ]]; then
+		if [[ -z $fingerprint ]]; then
+			echo "Google Sign Fingerprint must be provided for Google Play signing. Exiting."
 			exit 1
 		else
-			echo "GOOGLE_SIGN_FINGERPRINT was not provided, will be using SIGN_FINGERPRINT instead."
-			GOOGLE_SIGN_FINGERPRINT=$SIGN_FINGERPRINT
+			echo "Google Sign Fingerprint was not provided, will be using Sign Fringerprint instead."
+			google_fingerprint=$fingerprint
 		fi
 	fi
-	cf="--signing_fingerprint ${GOOGLE_SIGN_FINGERPRINT}"
+	gp="--google_play_signing --signing_fingerprint ${google_fingerprint}"
+	sf=""
 fi
 
 bl=""
@@ -146,40 +148,43 @@ if [[ $build_to_test != "none" ]]; then
 fi
 
 case $sign_method in
-"Private-Signing")		echo "Private Signing"
+"Private-Signing")		
 						print_all_params
+						echo "Private Signing"
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
 							--app $app_file \
 							--fusion_set_id $fusion_set_id \
 							$tm \
 							--private_signing \
 							$gp \
-							$cf \
+							$sf \
 							$bl \
 							$btv \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
-"Auto-Dev-Signing")		echo "Auto Dev Signing"
+"Auto-Dev-Signing")		
 						print_all_params
+						echo "Auto Dev Signing"
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
 							--app $app_file \
 							--fusion_set_id $fusion_set_id \
 							$tm \
 							--auto_dev_private_signing \
 							$gp \
-							$cf \
+							$sf \
 							$bl \
 							$btv \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
-"On-Appdome")			echo "On Appdome Signing"
+"On-Appdome")			
 						keystore_file=$(download_file $BITRISEIO_ANDROID_KEYSTORE_URL)
 						keystore_pass=$BITRISEIO_ANDROID_KEYSTORE_PASSWORD
 						keystore_alias=$BITRISEIO_ANDROID_KEYSTORE_ALIAS
 						key_pass=$BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
 						print_all_params
+						echo "On Appdome Signing"
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
 							--app $app_file \
 							--fusion_set_id $fusion_set_id \
@@ -189,7 +194,6 @@ case $sign_method in
 							--keystore_pass "$keystore_pass" \
 							--keystore_alias "$keystore_alias" \
 							$gp \
-							$cf \
 							$bl \
 							$btv \
 							--key_pass "$key_pass" \
