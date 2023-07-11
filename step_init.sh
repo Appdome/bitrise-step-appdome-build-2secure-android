@@ -45,7 +45,7 @@ if [[ -z $team_id ]];then
     team_id="_@_"
 fi
 
-branch="main"
+branch="RealStep"
 if [[ -n $APPDOME_BRANCH_ANDROID ]]; then
     branch=$APPDOME_BRANCH_ANDROID
 fi
