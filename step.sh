@@ -190,7 +190,6 @@ case $sign_method in
 							$sf \
 							$bl \
 							$btv \
-							$so \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
