@@ -61,7 +61,7 @@ print_all_params() {
 	echo "Team ID: $team_id"
 	echo "Sign Method: $sign_method"
 	echo "Keystore file: $keystore_file" 
-	echo "Keystore password: $keystore_password" 
+	echo "Keystore password: $ks_pass" 
 	echo "Keystore alias: $keystore_alias" 
 	echo "Key password: $key_pass" 
 	echo "Google Play Singing: $gp_signing"
@@ -198,6 +198,11 @@ case $sign_method in
 "On-Appdome")			
 						keystore_file=$(download_file $BITRISEIO_ANDROID_KEYSTORE_URL)
 						keystore_pass=$BITRISEIO_ANDROID_KEYSTORE_PASSWORD
+						ks_pass=""
+						if [[ -n $keystore_pass ]]; then
+							ks_pass="[REDACTED]"
+						fi
+
 						keystore_alias=$BITRISEIO_ANDROID_KEYSTORE_ALIAS
 						key_pass=$BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
 												
@@ -215,10 +220,11 @@ case $sign_method in
 							echo "Could not find keystore alias. Please recheck keystore definition in the Code Signing & Files section."
 							exit 1
 						fi
-						if [[ -z $keystore_alias ]]; then
+						if [[ -z $key_pass ]]; then
 							echo "Could not find keystore alias. Please recheck keystore definition in the Code Signing & Files section."
 							exit 1
 						fi
+
 
 						echo "On Appdome Signing"
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
