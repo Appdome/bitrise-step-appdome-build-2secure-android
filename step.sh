@@ -61,7 +61,9 @@ print_all_params() {
 	echo "Team ID: $team_id"
 	echo "Sign Method: $sign_method"
 	echo "Keystore file: $keystore_file" 
+	echo "Keystore password: $ks_pass" 
 	echo "Keystore alias: $keystore_alias" 
+	echo "Key password: $key_pass" 
 	echo "Google Play Singing: $gp_signing"
 	echo "Google Fingerprint: $GOOGLE_SIGN_FINGERPRINT" 
 	echo "Sign Fingerprint: $SIGN_FINGERPRINT"
@@ -74,13 +76,13 @@ print_all_params() {
 }
 
 download_file() {
-	file_location=$1
+	file_location=$(echo "$1" | tr -cd '\000-\177')
 	uri=$(echo $file_location | awk -F "?" '{print $1}')
 	downloaded_file=$(basename $uri)
 	curl -L $file_location --output $downloaded_file && echo $downloaded_file
 }
 
-internal_version="RS-A-2.0.0"
+internal_version="RS-A-2.0.1"
 echo "Internal version: $internal_version"
 export APPDOME_CLIENT_HEADER="Bitrise/1.0.0"
 
@@ -196,9 +198,34 @@ case $sign_method in
 "On-Appdome")			
 						keystore_file=$(download_file $BITRISEIO_ANDROID_KEYSTORE_URL)
 						keystore_pass=$BITRISEIO_ANDROID_KEYSTORE_PASSWORD
+						ks_pass=""
+						if [[ -n $keystore_pass ]]; then
+							ks_pass="[REDACTED]"
+						fi
+
 						keystore_alias=$BITRISEIO_ANDROID_KEYSTORE_ALIAS
 						key_pass=$BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
+												
 						print_all_params
+
+						if [[ -z $BITRISEIO_ANDROID_KEYSTORE_URL ]]; then
+							echo "Could not find keystore file. Please recheck keystore definition in the Code Signing & Files section."
+							exit 1
+						fi
+						if [[ -z $keystore_pass ]]; then
+							echo "Could not find keystore password. Please recheck keystore definition in the Code Signing & Files section."
+							exit 1
+						fi
+						if [[ -z $keystore_alias ]]; then
+							echo "Could not find keystore alias. Please recheck keystore definition in the Code Signing & Files section."
+							exit 1
+						fi
+						if [[ -z $key_pass ]]; then
+							echo "Could not find keystore alias. Please recheck keystore definition in the Code Signing & Files section."
+							exit 1
+						fi
+
+
 						echo "On Appdome Signing"
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
 							--app $app_file \
