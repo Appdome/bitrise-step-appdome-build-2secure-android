@@ -58,6 +58,7 @@ print_all_params() {
 	echo "Appdome Build-2Secure parameters:"
 	echo "=================================="
 	echo "App location: $app_location"
+	echo "Output file: $secured_app_output"
 	echo "Team ID: $team_id"
 	echo "Sign Method: $sign_method"
 	echo "Keystore file: $keystore_file" 
@@ -82,20 +83,21 @@ download_file() {
 	curl -L $file_location --output $downloaded_file && echo $downloaded_file
 }
 
-internal_version="RS-A-2.0.1"
+internal_version="RS-A-2.1"
 echo "Internal version: $internal_version"
 export APPDOME_CLIENT_HEADER="Bitrise/1.0.0"
 
 app_location=$1
-fusion_set_id=$2
-team_id=$3
-sign_method=$4
-gp_signing=$5
-google_fingerprint=$6
-fingerprint=$7
-build_logs=$8
-build_to_test=$9
-secondary_output=${10}
+output_filename=$2
+fusion_set_id=$3
+team_id=$4
+sign_method=$5
+gp_signing=$6
+google_fingerprint=$7
+fingerprint=$8
+build_logs=$9
+build_to_test=${10}
+secondary_output=${11}
 build_to_test=$(echo "$build_to_test" | tr '[:upper:]' '[:lower:]')
 
 if [[ -z $APPDOME_API_KEY ]]; then
@@ -119,7 +121,11 @@ if [[ $extension == "aab" && $secondary_output == "true" ]]; then
 fi
 
 certificate_output=$BITRISE_DEPLOY_DIR/certificate.pdf
-secured_app_output=$BITRISE_DEPLOY_DIR/Appdome_$(basename $app_file)
+if [[ $output_filename == "_@_" ]]; then
+	secured_app_output=$BITRISE_DEPLOY_DIR/Appdome_$(basename $app_file)
+else
+	secured_app_output=$BITRISE_DEPLOY_DIR/$output_filename.$extension
+fi
 
 if [[ $team_id == "_@_" ]]; then
 	team_id=""
