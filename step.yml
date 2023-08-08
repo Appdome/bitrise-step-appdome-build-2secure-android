@@ -64,7 +64,7 @@ deps:
 
 toolkit:
   bash:
-    entry_file: step_init.sh
+    entry_file: step.sh
 
 
 inputs:
@@ -73,6 +73,12 @@ inputs:
         title: "App file URL or EnvVar"
         summary: "URL to app file (apk/aab) or an EnvVar representing its path (i.e. $BITRISE_APK_PATH or $BITRISE_AAB_PATH)"
         is_required: true
+
+    - output_filename:
+      opts:
+        title: "Output file name (without extension)"
+        summary: "Output app file name. The file extension (aab/apk) will be the same as the original app. If not specified, the default output file will be: Appdome_<original_app_name>"
+        is_required: false
         
     - fusion_set_id: 
       opts:
@@ -96,37 +102,13 @@ inputs:
         
     - gp_signing: "false"
       opts:
-        title: "Google Play Signing"
+        title: "Google Play Signing?"
         description: "Sign the app for Google Play? If 'true', requires $SIGN_FINGERPRINT in the Secrets tab."
         value_options:
         - "true"
         - "false"
         is_required: true
-        category: Google Signing
         
-    - google_fingerprint: $GOOGLE_SIGN_FINGERPRINT
-      opts:
-        title: "Google Sign Fingerprint"
-        description: "Google Sign Fingerprint for Google Play singing, or its Secret variable name."
-        is_required: false
-        category: Google Signing
-
-    - fingerprint: $SIGN_FINGERPRINT
-      opts:
-        title: "Sign Fingerprint"
-        description: "Sign Fingerprint (not for Google Play singing), or its Secret variable name."
-        is_required: false
-        category: Private/Auto-Dev Signing
-        
-    - secondary_output: "false"
-      opts:
-        title: "Secondary Output"
-        description: "Select 'true' to create a Universal.apk file (applies to .aab app types only)."
-        value_options:
-        - "true"
-        - "false"
-        is_required: false
-
     - build_logs: "false"
       opts:
         title: "Build With Diagnostic Logs"
@@ -136,18 +118,6 @@ inputs:
         - "false"
         is_required: true
         
-    - build_to_test: "None"
-      opts:
-        title: "Build to test Vendor"
-        description: "Select a device cloud vendor this build will be ready for testing on. Select None for a production build or for a vendor not in the list."
-        value_options:
-        - "None"
-        - "Bitbar"
-        - "Browserstack"
-        - "Saucelabs"
-        - "Lambdatest"
-        is_required: true
-
    # - app_signing_cert: 
 #      opts:
 #        title: "Signing Fingerprint"
@@ -187,12 +157,6 @@ outputs:
     summary: Local path of the secured .aab file
     description: |
         Local path of the secured .aab file. Available when 'Signing Method' set to 'On-Appdome' or 'Private-Signing'
-- APPDOME_SECURED_SO_PATH:
-  opts:    
-    title: Secured secondary output file path (Appdome_Universal.apk)
-    summary: Local path of the secured secondary output file (Appdome_Universal.apk)
-    description: |
-        Local path of the secured secondary output file (Appdome_Universal.apk). Available if Secondary Output is set to 'true' and the original app is .aab type.
 - APPDOME_PRIVATE_SIGN_SCRIPT_PATH:  
   opts:    
     title: .sh sign script file path   
