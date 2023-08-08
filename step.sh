@@ -88,16 +88,16 @@ echo "Internal version: $internal_version"
 export APPDOME_CLIENT_HEADER="Bitrise/1.0.0"
 
 app_location=$1
-output_filename=$2
-fusion_set_id=$3
-team_id=$4
-sign_method=$5
-gp_signing=$6
-google_fingerprint=$7
-fingerprint=$8
-build_logs=$9
-build_to_test=${10}
-secondary_output=${11}
+fusion_set_id=$2
+team_id=$3
+sign_method=$4
+gp_signing=$5
+google_fingerprint=$6
+fingerprint=$7
+build_logs=$8
+build_to_test=$9
+secondary_output=${10}
+output_filename=${11}
 build_to_test=$(echo "$build_to_test" | tr '[:upper:]' '[:lower:]')
 
 if [[ -z $APPDOME_API_KEY ]]; then
