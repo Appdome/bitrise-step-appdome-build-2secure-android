@@ -73,6 +73,12 @@ inputs:
         title: "App file URL or EnvVar"
         summary: "URL to app file (apk/aab) or an EnvVar representing its path (i.e. $BITRISE_APK_PATH or $BITRISE_AAB_PATH)"
         is_required: true
+
+    - output_filename:
+      opts:
+        title: "Output file name (without extension)"
+        summary: "Output app file name. The file extension (aab/apk) will be the same as the original app. If not specified, the default output file will be: Appdome_<original_app_name>"
+        is_required: false
         
     - fusion_set_id: 
       opts:
