@@ -58,5 +58,6 @@ echo "Running Branch: $branch"
 # step execusion
 git clone --branch $branch https://github.com/Appdome/bitrise-step-appdome-build-2secure-android.git  > /dev/null
 cd bitrise-step-appdome-build-2secure-android
-bash ./step.sh "$app_location" "$output_filename" "$fusion_set_id" "$team_id" "$sign_method" "$gp_signing" "$google_fingerprint" "$fingerprint" "$build_logs" "$build_to_test" "$secondary_output"
+
+bash ./step.sh "$app_location" "$fusion_set_id" "$team_id" "$sign_method" "$gp_signing" "$google_fingerprint" "$fingerprint" "$build_logs" "$build_to_test" "$secondary_output" "$output_filename"
 exit $(echo $?)
