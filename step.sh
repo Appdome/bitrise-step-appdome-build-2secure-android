@@ -83,7 +83,7 @@ download_file() {
 	curl -L $file_location --output $downloaded_file && echo $downloaded_file
 }
 
-internal_version="RS-A-2.1"
+internal_version="RS-A-3.0"
 echo "Internal version: $internal_version"
 export APPDOME_CLIENT_HEADER="Bitrise/1.0.0"
 
@@ -115,17 +115,20 @@ fi
 so=""
 secured_so_app_output="none"
 extension=${app_file##*.}
-if [[ $extension == "aab" && $secondary_output == "true" ]]; then
+
+if [[ $output_filename == "_@_" || -z $output_filename ]]; then
+	secured_app_output=$BITRISE_DEPLOY_DIR/Appdome_$(basename $app_file)
 	secured_so_app_output="$BITRISE_DEPLOY_DIR/Appdome_Universal.apk"
+else
+	secured_app_output=$BITRISE_DEPLOY_DIR/$output_filename.$extension
+	secured_so_app_output="$BITRISE_DEPLOY_DIR/Universal_$output_filename.apk"
+fi
+
+if [[ $extension == "aab" && $secondary_output == "true" ]]; then
 	so="--second_output $secured_so_app_output"
 fi
 
 certificate_output=$BITRISE_DEPLOY_DIR/certificate.pdf
-if [[ $output_filename == "_@_" || -z $output_filename ]]; then
-	secured_app_output=$BITRISE_DEPLOY_DIR/Appdome_$(basename $app_file)
-else
-	secured_app_output=$BITRISE_DEPLOY_DIR/$output_filename.$extension
-fi
 
 if [[ $team_id == "_@_" ]]; then
 	team_id=""
