@@ -121,7 +121,7 @@ if [[ $output_filename == "_@_" || -z $output_filename ]]; then
 	secured_so_app_output="$BITRISE_DEPLOY_DIR/Appdome_Universal.apk"
 else
 	secured_app_output=$BITRISE_DEPLOY_DIR/$output_filename.$extension
-	secured_so_app_output="$BITRISE_DEPLOY_DIR/$output_filename.apk"
+	secured_so_app_output="$BITRISE_DEPLOY_DIR/Universal_$output_filename.apk"
 fi
 
 if [[ $extension == "aab" && $secondary_output == "true" ]]; then
