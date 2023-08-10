@@ -193,6 +193,12 @@ outputs:
     summary: Local path of the secured .aab file
     description: |
         Local path of the secured .aab file. Available when 'Signing Method' set to 'On-Appdome' or 'Private-Signing'
+- APPDOME_SECURED_SO_PATH:  
+  opts:    
+    title: Secured secondary output file path (universal apk)
+    summary: Local path of the secured secondary output file
+    description: |
+       Local path of the secured secondary output file (universal apk). Available if Secondary Output is set to 'true' and the original app is .aab type
 - APPDOME_PRIVATE_SIGN_SCRIPT_PATH:  
   opts:    
     title: .sh sign script file path   
