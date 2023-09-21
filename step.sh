@@ -190,9 +190,9 @@ case $sign_method in
 							--certificate_output $certificate_output 
 						;;
 "Auto-Dev-Signing")		
-						print_all_params
 						echo "Auto Dev Signing"
-						secured_app_output_name=${secured_app_output%.*}
+						secured_app_output_name=${secured_app_output%.*}.sh
+						print_all_params
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
 							--app $app_file \
 							--fusion_set_id $fusion_set_id \
@@ -202,7 +202,7 @@ case $sign_method in
 							$sf \
 							$bl \
 							$btv \
-							--output "$secured_app_output_name.sh" \
+							--output "$secured_app_output_name" \
 							--certificate_output $certificate_output 
 						;;
 "On-Appdome")			
