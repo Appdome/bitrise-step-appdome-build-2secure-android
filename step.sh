@@ -191,7 +191,8 @@ case $sign_method in
 						;;
 "Auto-Dev-Signing")		
 						echo "Auto Dev Signing"
-						secured_app_output_name=${secured_app_output%.*}.sh
+						secured_app_output_name=${secured_app_output%.*}
+						secured_app_output=$secured_app_output_name.sh
 						print_all_params
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
 							--app $app_file \
@@ -202,7 +203,7 @@ case $sign_method in
 							$sf \
 							$bl \
 							$btv \
-							--output "$secured_app_output_name" \
+							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
 "On-Appdome")			
