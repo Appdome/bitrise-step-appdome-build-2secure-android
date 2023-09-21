@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-
+# file version: RS-A-3.2
 # echo "This is the value specified for the input 'example_step_input': ${example_step_input}"
 
 #
@@ -83,9 +83,9 @@ download_file() {
 	curl -L $file_location --output $downloaded_file && echo $downloaded_file
 }
 
-internal_version="RS-A-2.1"
+internal_version="RS-A-3.2"
 echo "Internal version: $internal_version"
-export APPDOME_CLIENT_HEADER="Bitrise/1.0.0"
+export APPDOME_CLIENT_HEADER="Bitrise/3.2.0"
 
 app_location=$1
 fusion_set_id=$2
@@ -115,17 +115,20 @@ fi
 so=""
 secured_so_app_output="none"
 extension=${app_file##*.}
-if [[ $extension == "aab" && $secondary_output == "true" ]]; then
+
+if [[ $output_filename == "_@_" || -z $output_filename ]]; then
+	secured_app_output=$BITRISE_DEPLOY_DIR/Appdome_$(basename $app_file)
 	secured_so_app_output="$BITRISE_DEPLOY_DIR/Appdome_Universal.apk"
+else
+	secured_app_output=$BITRISE_DEPLOY_DIR/$output_filename.$extension
+	secured_so_app_output="$BITRISE_DEPLOY_DIR/Universal_$output_filename.apk"
+fi
+
+if [[ $extension == "aab" && $secondary_output == "true" ]]; then
 	so="--second_output $secured_so_app_output"
 fi
 
 certificate_output=$BITRISE_DEPLOY_DIR/certificate.pdf
-if [[ $output_filename == "_@_" || -z  $output_filename ]]; then
-	secured_app_output=$BITRISE_DEPLOY_DIR/Appdome_$(basename $app_file)
-else
-	secured_app_output=$BITRISE_DEPLOY_DIR/$output_filename.$extension
-fi
 
 if [[ $team_id == "_@_" ]]; then
 	team_id=""
@@ -189,6 +192,7 @@ case $sign_method in
 "Auto-Dev-Signing")		
 						print_all_params
 						echo "Auto Dev Signing"
+						secured_app_output_name=${secured_app_output%.*}
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
 							--app $app_file \
 							--fusion_set_id $fusion_set_id \
@@ -198,7 +202,7 @@ case $sign_method in
 							$sf \
 							$bl \
 							$btv \
-							--output "$secured_app_output" \
+							--output "$secured_app_output_name.sh" \
 							--certificate_output $certificate_output 
 						;;
 "On-Appdome")			
@@ -264,3 +268,8 @@ else
 	fi
 fi
 envman add --key APPDOME_CERTIFICATE_PATH --value $certificate_output
+
+cd $PWD/..
+pwd=$PWD
+cd $PWD/..
+rm -rf $pwd
