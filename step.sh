@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-
+# file version: RS-A-3.2
 # echo "This is the value specified for the input 'example_step_input': ${example_step_input}"
 
 #
@@ -83,9 +83,9 @@ download_file() {
 	curl -L $file_location --output $downloaded_file && echo $downloaded_file
 }
 
-internal_version="RS-A-3.1"
+internal_version="RS-A-3.2"
 echo "Internal version: $internal_version"
-export APPDOME_CLIENT_HEADER="Bitrise/1.0.0"
+export APPDOME_CLIENT_HEADER="Bitrise/3.2.0"
 
 app_location=$1
 fusion_set_id=$2
@@ -190,8 +190,10 @@ case $sign_method in
 							--certificate_output $certificate_output 
 						;;
 "Auto-Dev-Signing")		
-						print_all_params
 						echo "Auto Dev Signing"
+						secured_app_output_name=${secured_app_output%.*}
+						secured_app_output=$secured_app_output_name.sh
+						print_all_params
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
 							--app $app_file \
 							--fusion_set_id $fusion_set_id \
