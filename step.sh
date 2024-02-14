@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-# file version: RS-A-3.2
+# file version: RS-A-3.3
 # echo "This is the value specified for the input 'example_step_input': ${example_step_input}"
 
 #
