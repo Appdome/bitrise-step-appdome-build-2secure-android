@@ -83,9 +83,9 @@ download_file() {
 	curl -L $file_location --output $downloaded_file && echo $downloaded_file
 }
 
-internal_version="RS-A-3.2"
+internal_version="RS-A-3.3"
 echo "Internal version: $internal_version"
-export APPDOME_CLIENT_HEADER="Bitrise/3.2.0"
+export APPDOME_CLIENT_HEADER="Bitrise/3.3.0"
 
 app_location=$1
 fusion_set_id=$2
@@ -110,6 +110,11 @@ then
 	app_file=../$(download_file $app_location)
 else
 	app_file=$app_location
+	if [[ $app_location == *" "* ]];
+	then
+		app_file=${app_file//" "/"_"}
+		cp "$app_location" "$app_file"
+	fi
 fi
 
 so=""
