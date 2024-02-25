@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-# file version: RS-A-3.3
+# file version: RS-A-3.4
 # echo "This is the value specified for the input 'example_step_input': ${example_step_input}"
 
 #
@@ -83,9 +83,9 @@ download_file() {
 	curl -L $file_location --output $downloaded_file && echo $downloaded_file
 }
 
-internal_version="RS-A-3.3"
+internal_version="RS-A-3.4"
 echo "Internal version: $internal_version"
-export APPDOME_CLIENT_HEADER="Bitrise/3.3.0"
+export APPDOME_CLIENT_HEADER="Bitrise/3.4"
 
 app_location=$1
 fusion_set_id=$2
@@ -177,6 +177,8 @@ if [[ $build_to_test != "none" ]]; then
 	btv="--build_to_test_vendor  $build_to_test"
 fi
 
+dso="-dso $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip"
+
 case $sign_method in
 "Private-Signing")		
 						print_all_params
@@ -191,6 +193,7 @@ case $sign_method in
 							$bl \
 							$btv \
 							$so \
+							$dso \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
@@ -208,6 +211,7 @@ case $sign_method in
 							$sf \
 							$bl \
 							$btv \
+							$dso \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
@@ -256,6 +260,7 @@ case $sign_method in
 							$btv \
 							$so \
 							--key_pass "$key_pass" \
+							$dso \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
