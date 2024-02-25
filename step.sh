@@ -85,7 +85,7 @@ download_file() {
 
 internal_version="RS-A-3.4"
 echo "Internal version: $internal_version"
-export APPDOME_CLIENT_HEADER="Bitrise/3.4"
+export APPDOME_CLIENT_HEADER="Bitrise/3.4.0"
 
 app_location=$1
 fusion_set_id=$2
