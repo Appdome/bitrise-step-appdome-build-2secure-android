@@ -279,7 +279,7 @@ else
 	fi
 fi
 
-if [[ -n $dso ]]; then
+if [[ -n $dso ]]; then 
 	envman add --key APPDOME_DEOB_MAPPING_FILES --value $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip
 fi
 
