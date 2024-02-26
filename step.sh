@@ -278,6 +278,11 @@ else
 		envman add --key APPDOME_SECURED_SO_PATH --value $secured_so_app_output
 	fi
 fi
+
+if [[ -n $dso ]]; then
+	envman add --key APPDOME_DEOB_MAPPING_FILES --value $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip
+fi
+
 envman add --key APPDOME_CERTIFICATE_PATH --value $certificate_output
 
 cd $PWD/..
