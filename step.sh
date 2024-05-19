@@ -127,7 +127,10 @@ if [[ -n $GOOGLE_APPLICATION_CREDENTIALS ]]; then
 		fi
 	fi
 	GOOGLE_APPLICATION_CREDENTIALS=$google_service_file
+	echo "Google account file: $GOOGLE_APPLICATION_CREDENTIALS"
 fi
+
+exit 0
 
 so=""
 secured_so_app_output="none"
