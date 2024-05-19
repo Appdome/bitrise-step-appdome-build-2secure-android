@@ -281,22 +281,23 @@ else
 fi
 
 if [[ -n $dso ]]; then 
+	skip=false
 	envman add --key APPDOME_DEOB_MAPPING_FILES --value $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip
 	if [[ -z $GOOGLE_APPLICATION_CREDENTIALS ]]; then
-		echo "Failed uploading code obfuscation mapping file: Missing Google authentication service file."
-		exit 1
+		echo "WARNING: Missing Google authentication service file. Skipping code obfustaction mapping file uploading to Firebase."
+		skip=true	
 	fi
-	skip=false
+	
 	unzip $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip -d deobfuscation_mapping_files
 	cd deobfuscation_mapping_files
-	ls -al
+
 	if [[ ! -f mapping.txt ]]; then
-		echo "WARNING: Missing mapping.txt file. Please check if code efuscation is included in your fusion set."
+		echo "WARNING: Missing mapping.txt file. Skipping code obfustaction mapping file uploading to Firebase."
 		skip=true
 	fi
 	
 	if [[ ! -f com_google_firebase_crashlytics_mappingfileid.xml ]]; then
-		echo "WARNING: Missing com_google_firebase_crashlytics_mappingfileid.xml file. Please check if code efuscation is included in your fusion set."
+		echo "WARNING: Missing com_google_firebase_crashlytics_mappingfileid.xml file. Skipping code obfustaction mapping file uploading to Firebase."
 		skip=true
 	fi
 
