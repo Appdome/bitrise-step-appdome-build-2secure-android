@@ -118,7 +118,7 @@ fi
 
 if [[ -n $GOOGLE_APPLICATION_CREDENTIALS ]]; then
 	if [[ $GOOGLE_APPLICATION_CREDENTIALS == *"http"* ]]; then
-		google_service_file=../$(download_file $GOOGLE_APPLICATION_CREDENTIALS)
+		GOOGLE_APPLICATION_CREDENTIALS=../$(download_file $GOOGLE_APPLICATION_CREDENTIALS)
 	else
 		google_service_file=$GOOGLE_APPLICATION_CREDENTIALS
 		if [[ $google_service_file == *" "* ]];	then
@@ -126,7 +126,8 @@ if [[ -n $GOOGLE_APPLICATION_CREDENTIALS ]]; then
 			cp "$google_service_file" "$GOOGLE_APPLICATION_CREDENTIALS"
 		fi
 	fi
-	envman add --key GOOGLE_APPLICATION_CREDENTIALS --value $GOOGLE_APPLICATION_CREDENTIALS
+	echo "Google service account: $GOOGLE_APPLICATION_CREDENTIALS"
+	# envman add --key GOOGLE_APPLICATION_CREDENTIALS --value $GOOGLE_APPLICATION_CREDENTIALS
 fi
 
 so=""
