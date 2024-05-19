@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-# file version: RS-A-3.4
+# file version: RS-A-3.5
 # echo "This is the value specified for the input 'example_step_input': ${example_step_input}"
 
 #
@@ -83,9 +83,9 @@ download_file() {
 	curl -L $file_location --output $downloaded_file && echo $downloaded_file
 }
 
-internal_version="RS-A-3.4"
+internal_version="RS-A-3.5"
 echo "Internal version: $internal_version"
-export APPDOME_CLIENT_HEADER="Bitrise/3.4.0"
+export APPDOME_CLIENT_HEADER="Bitrise/3.5.0"
 
 app_location=$1
 fusion_set_id=$2
@@ -98,6 +98,7 @@ build_logs=$8
 build_to_test=$9
 secondary_output=${10}
 output_filename=${11}
+app_id="1:304073265070:android:404d3d50c1f936b17ac23f"
 build_to_test=$(echo "$build_to_test" | tr '[:upper:]' '[:lower:]')
 
 if [[ -z $APPDOME_API_KEY ]]; then
@@ -281,6 +282,14 @@ fi
 
 if [[ -n $dso ]]; then 
 	envman add --key APPDOME_DEOB_MAPPING_FILES --value $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip
+	if [[ -z $GOOGLE_APPLICATION_CREDENTIALS ]]; then
+		echo "Failed uploading code obfuscation mapping file: Missing Google authentication service file."
+		exit 1
+	fi
+	unzip $APPDOME_DEOB_MAPPING_FILES -d deobfuscation_mapping_files
+	cd deobfuscation_mapping_files
+	curl -sL https://firebase.tools | bash
+	firebase crashlytics:mappingfile:upload --app=$app_id --resource-file=com_google_firebase_crashlytics_mappingfileid.xml mapping.txt
 fi
 
 envman add --key APPDOME_CERTIFICATE_PATH --value $certificate_output
