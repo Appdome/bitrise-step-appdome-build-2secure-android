@@ -187,6 +187,7 @@ dso="-dso $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip"
 appid = ""
 if [[ -n $app_id ]]; then 
 	appid="--app_id $app_id"
+fi
 
 case $sign_method in
 "Private-Signing")		
