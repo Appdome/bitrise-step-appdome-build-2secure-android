@@ -126,10 +126,8 @@ if [[ -n $GOOGLE_APPLICATION_CREDENTIALS ]]; then
 			cp "$google_service_file" "$GOOGLE_APPLICATION_CREDENTIALS"
 		fi
 	fi
-	echo "Google service account: $GOOGLE_APPLICATION_CREDENTIALS"
 	envman add --key GOOGLE_APPLICATION_CREDENTIALS --value $GOOGLE_APPLICATION_CREDENTIALS
 fi
-exit 0
 
 so=""
 secured_so_app_output="none"
