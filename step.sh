@@ -129,8 +129,6 @@ if [[ -n $GOOGLE_APPLICATION_CREDENTIALS ]]; then
 	envman add --key GOOGLE_APPLICATION_CREDENTIALS --value $GOOGLE_APPLICATION_CREDENTIALS
 fi
 
-exit 0
-
 so=""
 secured_so_app_output="none"
 extension=${app_file##*.}
