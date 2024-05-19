@@ -184,7 +184,7 @@ fi
 
 dso="-dso $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip"
 
-appid = ""
+appid=""
 if [[ -n $app_id ]]; then 
 	appid="--app_id $app_id"
 fi
