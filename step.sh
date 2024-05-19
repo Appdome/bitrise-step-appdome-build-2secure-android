@@ -106,16 +106,27 @@ if [[ -z $APPDOME_API_KEY ]]; then
 	exit 1
 fi
 
-if [[ $app_location == *"http"* ]];
-then
+if [[ $app_location == *"http"* ]]; then
 	app_file=../$(download_file $app_location)
 else
 	app_file=$app_location
-	if [[ $app_location == *" "* ]];
-	then
+	if [[ $app_location == *" "* ]]; then
 		app_file=${app_file//" "/"_"}
 		cp "$app_location" "$app_file"
 	fi
+fi
+
+if [[ -n $GOOGLE_APPLICATION_CREDENTIALS ]]; then
+	if [[ $GOOGLE_APPLICATION_CREDENTIALS == *"http"* ]]; then
+		google_service_file=../$(download_file $GOOGLE_APPLICATION_CREDENTIALS)
+	else
+		google_service_file=$GOOGLE_APPLICATION_CREDENTIALS
+		if [[ $google_service_file == *" "* ]];	then
+			GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS//" "/"_"}
+			cp "$google_service_file" "$GOOGLE_APPLICATION_CREDENTIALS"
+		fi
+	fi
+	GOOGLE_APPLICATION_CREDENTIALS=$google_service_file
 fi
 
 so=""
