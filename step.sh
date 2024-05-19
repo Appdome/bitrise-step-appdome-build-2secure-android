@@ -143,8 +143,11 @@ else
 	tm="--team_id ${team_id}"
 fi
 
-appdome_api_branch="Eli---app-id"
-git clone --branch $appdome_api_branch https://github.com/Appdome/appdome-api-bash.git > /dev/null
+branch="master"
+if [[ -n $APPDOME_API_BRANCH ]]; then
+	branch=$APPDOME_API_BRANCH
+
+git clone --branch $branch https://github.com/Appdome/appdome-api-bash.git > /dev/null
 cd appdome-api-bash
 
 echo "Android platform detected"
