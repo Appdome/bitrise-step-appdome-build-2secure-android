@@ -286,21 +286,21 @@ if [[ -n $dso ]]; then
 		echo "Failed uploading code obfuscation mapping file: Missing Google authentication service file."
 		exit 1
 	fi
-	skip=""
+	skip=false
 	unzip $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip -d deobfuscation_mapping_files
 	cd deobfuscation_mapping_files
 	ls -al
 	if [[ ! -f mapping.txt ]]; then
-		echo "Missing mapping.txt file. Please check if code efuscation is included in your fusion set."
-		skip="true"
+		echo "WARNING: Missing mapping.txt file. Please check if code efuscation is included in your fusion set."
+		skip=true
 	fi
 	
 	if [[ ! -f com_google_firebase_crashlytics_mappingfileid.xml ]]; then
-		echo "Missing com_google_firebase_crashlytics_mappingfileid.xml file. Please check if code efuscation is included in your fusion set."
-		skip="true"
+		echo "WARNING: Missing com_google_firebase_crashlytics_mappingfileid.xml file. Please check if code efuscation is included in your fusion set."
+		skip=true
 	fi
 
-	if [[ ! $skip ]]; then
+	if [[ $skip = false ]]; then
 		firebase crashlytics:mappingfile:upload --app=$app_id --resource-file=com_google_firebase_crashlytics_mappingfileid.xml mapping.txt
 	fi
 fi
