@@ -98,7 +98,7 @@ build_logs=$8
 build_to_test=$9
 secondary_output=${10}
 output_filename=${11}
-app_id="1:304073265070:android:404d3d50c1f936b17ac23f"
+app_id=${12}
 build_to_test=$(echo "$build_to_test" | tr '[:upper:]' '[:lower:]')
 
 if [[ -z $APPDOME_API_KEY ]]; then
@@ -116,6 +116,7 @@ else
 	fi
 fi
 
+aid=""
 if [[ -n $GOOGLE_APPLICATION_CREDENTIALS ]]; then
 	if [[ $GOOGLE_APPLICATION_CREDENTIALS == *"http"* ]]; then
 		GOOGLE_APPLICATION_CREDENTIALS=../$(download_file $GOOGLE_APPLICATION_CREDENTIALS)
@@ -127,6 +128,11 @@ if [[ -n $GOOGLE_APPLICATION_CREDENTIALS ]]; then
 		fi
 	fi
 	envman add --key GOOGLE_APPLICATION_CREDENTIALS --value $GOOGLE_APPLICATION_CREDENTIALS
+	if [[ -n $app_id ]]; then 
+		aid="-aid $app_id"
+	fi
+else
+	echo "WARNING: GOOGLE_APPLICATION_CREDENTIALS file was not provided, obfuscation map will not be uploaded to Crashlytics." 
 fi
 
 so=""
@@ -195,11 +201,6 @@ if [[ $build_to_test != "none" ]]; then
 fi
 
 dso="-dso $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip"
-
-aid=""
-if [[ -n $app_id ]]; then 
-	aid="-aid $app_id"
-fi
 
 case $sign_method in
 "Private-Signing")		
