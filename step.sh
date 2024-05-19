@@ -146,6 +146,7 @@ fi
 branch="master"
 if [[ -n $APPDOME_API_BRANCH ]]; then
 	branch=$APPDOME_API_BRANCH
+fi
 
 git clone --branch $branch https://github.com/Appdome/appdome-api-bash.git > /dev/null
 cd appdome-api-bash
