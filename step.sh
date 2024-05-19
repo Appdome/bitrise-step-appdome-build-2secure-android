@@ -184,9 +184,9 @@ fi
 
 dso="-dso $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip"
 
-appid=""
+aid=""
 if [[ -n $app_id ]]; then 
-	appid="--app_id $app_id"
+	aid="-aid $app_id"
 fi
 
 case $sign_method in
@@ -204,7 +204,7 @@ case $sign_method in
 							$btv \
 							$so \
 							$dso \
-							$appid \
+							$aid \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
@@ -223,7 +223,7 @@ case $sign_method in
 							$bl \
 							$btv \
 							$dso \
-							$appid \
+							$aid \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
@@ -273,7 +273,7 @@ case $sign_method in
 							$so \
 							--key_pass "$key_pass" \
 							$dso \
-							$appid \
+							$aid \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
