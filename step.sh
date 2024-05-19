@@ -288,7 +288,8 @@ if [[ -n $dso ]]; then
 	fi
 	unzip $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip -d deobfuscation_mapping_files
 	cd deobfuscation_mapping_files
-	curl -sL https://firebase.tools | bash
+	ls -al
+	# curl -sL https://firebase.tools | bash
 	firebase crashlytics:mappingfile:upload --app=$app_id --resource-file=com_google_firebase_crashlytics_mappingfileid.xml mapping.txt
 fi
 
