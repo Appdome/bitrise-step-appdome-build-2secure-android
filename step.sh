@@ -143,7 +143,8 @@ else
 	tm="--team_id ${team_id}"
 fi
 
-git clone --branch Eli---app-id https://github.com/Appdome/appdome-api-bash.git > /dev/null
+appdome_api_branch="Eli---app-id"
+git clone --branch $appdome_api_branch https://github.com/Appdome/appdome-api-bash.git > /dev/null
 cd appdome-api-bash
 
 echo "Android platform detected"
@@ -180,6 +181,10 @@ fi
 
 dso="-dso $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip"
 
+appid = ""
+if [[ -n $app_id ]]; then 
+	appid="--app_id $app_id"
+
 case $sign_method in
 "Private-Signing")		
 						print_all_params
@@ -195,6 +200,7 @@ case $sign_method in
 							$btv \
 							$so \
 							$dso \
+							$appid \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
@@ -213,6 +219,7 @@ case $sign_method in
 							$bl \
 							$btv \
 							$dso \
+							$appid \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
@@ -262,6 +269,7 @@ case $sign_method in
 							$so \
 							--key_pass "$key_pass" \
 							$dso \
+							$appid \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
@@ -281,29 +289,7 @@ else
 fi
 
 if [[ -n $dso ]]; then 
-	# skip=false
 	envman add --key APPDOME_DEOB_MAPPING_FILES --value $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip
-	# if [[ -z $GOOGLE_APPLICATION_CREDENTIALS ]]; then
-	# 	echo "WARNING: Missing Google authentication service file. Skipping code obfustaction mapping file uploading to Firebase."
-	# 	skip=true	
-	# fi
-	
-	# unzip $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip -d deobfuscation_mapping_files
-	# cd deobfuscation_mapping_files
-
-	# if [[ ! -f mapping.txt ]]; then
-	# 	echo "WARNING: Missing mapping.txt file. Skipping code obfustaction mapping file uploading to Firebase."
-	# 	skip=true
-	# fi
-	
-	# if [[ ! -f com_google_firebase_crashlytics_mappingfileid.xml ]]; then
-	# 	echo "WARNING: Missing com_google_firebase_crashlytics_mappingfileid.xml file. Skipping code obfustaction mapping file uploading to Firebase."
-	# 	skip=true
-	# fi
-
-	# if [[ $skip = false ]]; then
-	# 	firebase crashlytics:mappingfile:upload --app=$app_id --resource-file=com_google_firebase_crashlytics_mappingfileid.xml mapping.txt
-	# fi
 fi
 
 envman add --key APPDOME_CERTIFICATE_PATH --value $certificate_output
