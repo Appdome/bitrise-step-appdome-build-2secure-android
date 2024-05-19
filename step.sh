@@ -143,7 +143,7 @@ else
 	tm="--team_id ${team_id}"
 fi
 
-git clone https://github.com/Appdome/appdome-api-bash.git > /dev/null
+git clone --branch Eli---app-id https://github.com/Appdome/appdome-api-bash.git > /dev/null
 cd appdome-api-bash
 
 echo "Android platform detected"
@@ -281,29 +281,29 @@ else
 fi
 
 if [[ -n $dso ]]; then 
-	skip=false
+	# skip=false
 	envman add --key APPDOME_DEOB_MAPPING_FILES --value $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip
-	if [[ -z $GOOGLE_APPLICATION_CREDENTIALS ]]; then
-		echo "WARNING: Missing Google authentication service file. Skipping code obfustaction mapping file uploading to Firebase."
-		skip=true	
-	fi
+	# if [[ -z $GOOGLE_APPLICATION_CREDENTIALS ]]; then
+	# 	echo "WARNING: Missing Google authentication service file. Skipping code obfustaction mapping file uploading to Firebase."
+	# 	skip=true	
+	# fi
 	
-	unzip $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip -d deobfuscation_mapping_files
-	cd deobfuscation_mapping_files
+	# unzip $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip -d deobfuscation_mapping_files
+	# cd deobfuscation_mapping_files
 
-	if [[ ! -f mapping.txt ]]; then
-		echo "WARNING: Missing mapping.txt file. Skipping code obfustaction mapping file uploading to Firebase."
-		skip=true
-	fi
+	# if [[ ! -f mapping.txt ]]; then
+	# 	echo "WARNING: Missing mapping.txt file. Skipping code obfustaction mapping file uploading to Firebase."
+	# 	skip=true
+	# fi
 	
-	if [[ ! -f com_google_firebase_crashlytics_mappingfileid.xml ]]; then
-		echo "WARNING: Missing com_google_firebase_crashlytics_mappingfileid.xml file. Skipping code obfustaction mapping file uploading to Firebase."
-		skip=true
-	fi
+	# if [[ ! -f com_google_firebase_crashlytics_mappingfileid.xml ]]; then
+	# 	echo "WARNING: Missing com_google_firebase_crashlytics_mappingfileid.xml file. Skipping code obfustaction mapping file uploading to Firebase."
+	# 	skip=true
+	# fi
 
-	if [[ $skip = false ]]; then
-		firebase crashlytics:mappingfile:upload --app=$app_id --resource-file=com_google_firebase_crashlytics_mappingfileid.xml mapping.txt
-	fi
+	# if [[ $skip = false ]]; then
+	# 	firebase crashlytics:mappingfile:upload --app=$app_id --resource-file=com_google_firebase_crashlytics_mappingfileid.xml mapping.txt
+	# fi
 fi
 
 envman add --key APPDOME_CERTIFICATE_PATH --value $certificate_output
