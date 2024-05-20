@@ -132,7 +132,7 @@ if [[ -n $GOOGLE_APPLICATION_CREDENTIALS ]]; then
 		aid="-aid $app_id"
 	fi
 else
-	echo "WARNING: GOOGLE_APPLICATION_CREDENTIALS file was not provided, obfuscation map will not be uploaded to Crashlytics." 
+	echo "WARNING: GOOGLE_APPLICATION_CREDENTIALS file was not provided, deobfuscation map will not be uploaded to Crashlytics." 
 fi
 
 so=""
