@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-# file version: RS-A-3.4
+# file version: RS-A-3.5
 # echo "This is the value specified for the input 'example_step_input': ${example_step_input}"
 
 #
@@ -83,9 +83,9 @@ download_file() {
 	curl -L $file_location --output $downloaded_file && echo $downloaded_file
 }
 
-internal_version="RS-A-3.4"
+internal_version="RS-A-3.5"
 echo "Internal version: $internal_version"
-export APPDOME_CLIENT_HEADER="Bitrise/3.4.0"
+export APPDOME_CLIENT_HEADER="Bitrise/3.5.0"
 
 app_location=$1
 fusion_set_id=$2
@@ -98,6 +98,7 @@ build_logs=$8
 build_to_test=$9
 secondary_output=${10}
 output_filename=${11}
+app_id=${12}
 build_to_test=$(echo "$build_to_test" | tr '[:upper:]' '[:lower:]')
 
 if [[ -z $APPDOME_API_KEY ]]; then
@@ -105,16 +106,33 @@ if [[ -z $APPDOME_API_KEY ]]; then
 	exit 1
 fi
 
-if [[ $app_location == *"http"* ]];
-then
+if [[ $app_location == *"http"* ]]; then
 	app_file=../$(download_file $app_location)
 else
 	app_file=$app_location
-	if [[ $app_location == *" "* ]];
-	then
+	if [[ $app_location == *" "* ]]; then
 		app_file=${app_file//" "/"_"}
 		cp "$app_location" "$app_file"
 	fi
+fi
+
+aid=""
+if [[ -n $GOOGLE_APPLICATION_CREDENTIALS ]]; then
+	if [[ $GOOGLE_APPLICATION_CREDENTIALS == *"http"* ]]; then
+		GOOGLE_APPLICATION_CREDENTIALS=../$(download_file $GOOGLE_APPLICATION_CREDENTIALS)
+	else
+		google_service_file=$GOOGLE_APPLICATION_CREDENTIALS
+		if [[ $google_service_file == *" "* ]];	then
+			GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS//" "/"_"}
+			cp "$google_service_file" "$GOOGLE_APPLICATION_CREDENTIALS"
+		fi
+	fi
+	envman add --key GOOGLE_APPLICATION_CREDENTIALS --value $GOOGLE_APPLICATION_CREDENTIALS
+	if [[ -n $app_id ]]; then 
+		aid="-aid $app_id"
+	fi
+else
+	echo "WARNING: GOOGLE_APPLICATION_CREDENTIALS file was not provided, deobfuscation map will not be uploaded to Crashlytics." 
 fi
 
 so=""
@@ -142,7 +160,12 @@ else
 	tm="--team_id ${team_id}"
 fi
 
-git clone https://github.com/Appdome/appdome-api-bash.git > /dev/null
+branch="master"
+if [[ -n $APPDOME_API_BRANCH ]]; then
+	branch=$APPDOME_API_BRANCH
+fi
+
+git clone --branch $branch https://github.com/Appdome/appdome-api-bash.git > /dev/null
 cd appdome-api-bash
 
 echo "Android platform detected"
@@ -194,6 +217,7 @@ case $sign_method in
 							$btv \
 							$so \
 							$dso \
+							$aid \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
@@ -212,6 +236,7 @@ case $sign_method in
 							$bl \
 							$btv \
 							$dso \
+							$aid \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
@@ -261,6 +286,7 @@ case $sign_method in
 							$so \
 							--key_pass "$key_pass" \
 							$dso \
+							$aid \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
