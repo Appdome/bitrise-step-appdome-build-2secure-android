@@ -74,6 +74,12 @@ inputs:
         summary: "URL to app file (apk/aab) or an EnvVar representing its path (i.e. $BITRISE_APK_PATH or $BITRISE_AAB_PATH)"
         is_required: true
 
+    - app_id:
+      opts:
+        title: "App ID in Firebase project"
+        summary: "App ID in Firebase project. Required for code deobfuscation map upload to Crashlytics."
+        is_required: false
+
     - output_filename:
       opts:
         title: "Output file name (without extension)"
