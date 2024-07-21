@@ -260,6 +260,13 @@ case $sign_method in
 									exit 1
 								fi
 							fi
+						else
+							keystore_pass_var=${certificate_file//"URL"/"PASSWORD"}
+							keystore_pass=$(eval echo \$$keystore_pass_var)								
+							key_pass_var=${certificate_file//"URL"/"PRIVATE_KEY_PASSWORD"}
+							key_pass=$(eval echo \$$key_pass_var)
+							keystore_alias_var=${certificate_file//"URL"/"ALIAS"}
+							keystore_alias=key_pass=$(eval echo \$$keystore_alias_var)
 						fi
 
 						keystore_file=$(download_file $certificate_file)
