@@ -83,22 +83,23 @@ download_file() {
 	curl -L $file_location --output $downloaded_file && echo $downloaded_file
 }
 
-internal_version="RS-A-3.5"
+internal_version="RS-A-3.6"
 echo "Internal version: $internal_version"
-export APPDOME_CLIENT_HEADER="Bitrise/3.5.0"
+export APPDOME_CLIENT_HEADER="Bitrise/3.6.0"
 
 app_location=$1
 fusion_set_id=$2
 team_id=$3
 sign_method=$4
-gp_signing=$5
-google_fingerprint=$6
-fingerprint=$7
-build_logs=$8
-build_to_test=$9
-secondary_output=${10}
-output_filename=${11}
-app_id=${12}
+certificate_file=$5
+gp_signing=$6
+google_fingerprint=$7
+fingerprint=$8
+build_logs=$9
+build_to_test=${10}
+secondary_output=${11}
+output_filename=${12}
+app_id=""
 build_to_test=$(echo "$build_to_test" | tr '[:upper:]' '[:lower:]')
 
 if [[ -z $APPDOME_API_KEY ]]; then
@@ -152,6 +153,7 @@ if [[ $extension == "aab" && $secondary_output == "true" ]]; then
 fi
 
 certificate_output=$BITRISE_DEPLOY_DIR/certificate.pdf
+
 
 if [[ $team_id == "_@_" ]]; then
 	team_id=""
@@ -241,20 +243,35 @@ case $sign_method in
 							--certificate_output $certificate_output 
 						;;
 "On-Appdome")			
-						keystore_file=$(download_file $BITRISEIO_ANDROID_KEYSTORE_URL)
-						keystore_pass=$BITRISEIO_ANDROID_KEYSTORE_PASSWORD
-						ks_pass=""
-						if [[ -n $keystore_pass ]]; then
-							ks_pass="[REDACTED]"
+						if [[ $certificate_file == "_@_" ]]; then
+							if [[ -n $BITRISEIO_ANDROID_KEYSTORE_URL ]]; then
+								certificate_file=$BITRISEIO_ANDROID_KEYSTORE_URL
+								keystore_pass=$BITRISEIO_ANDROID_KEYSTORE_PASSWORD
+								key_pass=$BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
+								keystore_alias=$BITRISEIO_ANDROID_KEYSTORE_ALIAS
+							else
+								if [[ -n $BITRISEIO_ANDROID_KEYSTORE_1_URL ]]; then
+									certificate_file=$BITRISEIO_ANDROID_KEYSTORE_1_URL
+									keystore_pass=$BITRISEIO_ANDROID_KEYSTORE_1_PASSWORD
+									key_pass=$BITRISEIO_ANDROID_KEYSTORE_PRIVATE_1_KEY_PASSWORD
+									keystore_alias=$BITRISEIO_ANDROID_KEYSTORE_1_ALIAS
+								else
+									echo "Could not find keystore file. Please recheck Android keystore file environment variable. Exiting."
+									exit 1
+								fi
+							fi
 						fi
 
-						keystore_alias=$BITRISEIO_ANDROID_KEYSTORE_ALIAS
-						key_pass=$BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
+						keystore_file=$(download_file $certificate_file)
+						# ks_pass=""
+						# if [[ -n $keystore_pass ]]; then
+						# 	ks_pass="[REDACTED]"
+						# fi
 												
 						print_all_params
 
-						if [[ -z $BITRISEIO_ANDROID_KEYSTORE_URL ]]; then
-							echo "Could not find keystore file. Please recheck keystore definition in the Code Signing & Files section."
+						if [[ ! -s $keystore_file ]]; then
+							echo "Failed obtaining keystore file. Please recheck Android keystore file environment variable. Exiting."
 							exit 1
 						fi
 						if [[ -z $keystore_pass ]]; then
