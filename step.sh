@@ -64,7 +64,7 @@ print_all_params() {
 	echo "Keystore file: $keystore_file" 
 	echo "Keystore password: $ks_pass" 
 	echo "Keystore alias: $keystore_alias" 
-	echo "Key password: $key_pass" 
+	echo "Key password: $private_key_password" 
 	echo "Google Play Singing: $gp_signing"
 	echo "Google Fingerprint: $GOOGLE_SIGN_FINGERPRINT" 
 	echo "Sign Fingerprint: $SIGN_FINGERPRINT"
@@ -250,13 +250,13 @@ case $sign_method in
 							if [[ -n $BITRISEIO_ANDROID_KEYSTORE_URL ]]; then
 								certificate_file=$BITRISEIO_ANDROID_KEYSTORE_URL
 								keystore_pass=$BITRISEIO_ANDROID_KEYSTORE_PASSWORD
-								key_pass=$BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
+								private_key_password=$BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
 								keystore_alias=$BITRISEIO_ANDROID_KEYSTORE_ALIAS
 							else
 								if [[ -n $BITRISEIO_ANDROID_KEYSTORE_1_URL ]]; then
 									certificate_file=$BITRISEIO_ANDROID_KEYSTORE_1_URL
 									keystore_pass=$BITRISEIO_ANDROID_KEYSTORE_1_PASSWORD
-									key_pass=$BITRISEIO_ANDROID_KEYSTORE_PRIVATE_1_KEY_PASSWORD
+									private_key_password=$BITRISEIO_ANDROID_KEYSTORE_PRIVATE_1_KEY_PASSWORD
 									keystore_alias=$BITRISEIO_ANDROID_KEYSTORE_1_ALIAS
 								else
 									echo "Could not find keystore file. Please recheck Android keystore file environment variable. Exiting."
@@ -266,10 +266,10 @@ case $sign_method in
 						fi
 
 						keystore_file=$(download_file $certificate_file)
-						# ks_pass=""
-						# if [[ -n $keystore_pass ]]; then
-						# 	ks_pass="[REDACTED]"
-						# fi
+						ks_pass=""
+						if [[ -n $keystore_pass ]]; then
+							ks_pass=$keystore_pass
+						fi
 												
 						print_all_params
 
@@ -285,8 +285,8 @@ case $sign_method in
 							echo "Could not find keystore alias. Please recheck Android keystore file environment variable. Exiting."
 							exit 1
 						fi
-						if [[ -z $key_pass ]]; then
-							echo "Could not find keystore key password. PPlease recheck Android keystore file environment variable. Exiting."
+						if [[ -z $private_key_password ]]; then
+							echo "Could not find keystore private key password. PPlease recheck Android keystore file environment variable. Exiting."
 							exit 1
 						fi
 
@@ -304,7 +304,7 @@ case $sign_method in
 							$bl \
 							$btv \
 							$so \
-							--key_pass "$key_pass" \
+							--key_pass "$private_key_password" \
 							$dso \
 							$aid \
 							--output "$secured_app_output" \
