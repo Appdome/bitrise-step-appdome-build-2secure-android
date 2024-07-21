@@ -176,13 +176,13 @@ cd appdome-api-bash
 echo "Android platform detected"
 
 sf=""
-if [[ -n $fingerprint ]]; then
+if [[ $fingerprint == "_@_" ]]; then
 	sf="--signing_fingerprint ${fingerprint}"
 fi
 
 gp=""
 if [[ $gp_signing == "true" ]]; then
-	if [[ -z $google_fingerprint ]]; then
+	if [[ -z $google_fingerprint || $google_fingerprint == "_@_" ]]; then
 		if [[ -z $fingerprint ]]; then
 			echo "Google Sign Fingerprint must be provided for Google Play signing. Exiting."
 			exit 1
@@ -277,16 +277,16 @@ case $sign_method in
 							echo "Failed obtaining keystore file. Please recheck Android keystore file environment variable. Exiting."
 							exit 1
 						fi
-						if [[ -z $keystore_pass ]]; then
+						if [[ $keystore_pass == "_@_" ||  -z $keystore_pass ]]; then
 							echo "Could not find keystore password. Please recheck Android keystore file environment variable. Exiting."
 							exit 1
 						fi
-						if [[ -z $keystore_alias ]]; then
+						if [[ $keystore_alias == "_@_" || -z $keystore_alias ]]; then
 							echo "Could not find keystore alias. Please recheck Android keystore file environment variable. Exiting."
 							exit 1
 						fi
-						if [[ -z $private_key_password ]]; then
-							echo "Could not find keystore private key password. PPlease recheck Android keystore file environment variable. Exiting."
+						if [[ $private_key_password == "_@_" || -z $private_key_password ]]; then
+							echo "Could not find keystore private key password. Please recheck Android keystore file environment variable. Exiting."
 							exit 1
 						fi
 
