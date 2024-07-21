@@ -92,13 +92,16 @@ fusion_set_id=$2
 team_id=$3
 sign_method=$4
 certificate_file=$5
-gp_signing=$6
-google_fingerprint=$7
-fingerprint=$8
-build_logs=$9
-build_to_test=${10}
-secondary_output=${11}
-output_filename=${12}
+keystore_password=$6
+keystore_alias=$7
+private_key_password=$8
+gp_signing=$9
+google_fingerprint=${10}
+fingerprint=${11}
+build_logs=${12}
+build_to_test=${13}
+secondary_output=${14}
+output_filename=${15}
 app_id=""
 build_to_test=$(echo "$build_to_test" | tr '[:upper:]' '[:lower:]')
 
@@ -260,13 +263,6 @@ case $sign_method in
 									exit 1
 								fi
 							fi
-						else
-							keystore_pass_var=${certificate_file//"URL"/"PASSWORD"}
-							keystore_pass=$(eval echo \$$keystore_pass_var)								
-							key_pass_var=${certificate_file//"URL"/"PRIVATE_KEY_PASSWORD"}
-							key_pass=$(eval echo \$$key_pass_var)
-							keystore_alias_var=${certificate_file//"URL"/"ALIAS"}
-							keystore_alias=$(eval echo \$$keystore_alias_var)
 						fi
 
 						keystore_file=$(download_file $certificate_file)
@@ -282,15 +278,15 @@ case $sign_method in
 							exit 1
 						fi
 						if [[ -z $keystore_pass ]]; then
-							echo "Could not find keystore password. Please recheck keystore definition in the Code Signing & Files section."
+							echo "Could not find keystore password. Please recheck Android keystore file environment variable. Exiting."
 							exit 1
 						fi
 						if [[ -z $keystore_alias ]]; then
-							echo "Could not find keystore alias. Please recheck keystore definition in the Code Signing & Files section."
+							echo "Could not find keystore alias. Please recheck Android keystore file environment variable. Exiting."
 							exit 1
 						fi
 						if [[ -z $key_pass ]]; then
-							echo "Could not find keystore alias. Please recheck keystore definition in the Code Signing & Files section."
+							echo "Could not find keystore key password. PPlease recheck Android keystore file environment variable. Exiting."
 							exit 1
 						fi
 
