@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-# file version: RS-A-3.5
+# file version: RS-A-3.6
 # echo "This is the value specified for the input 'example_step_input': ${example_step_input}"
 
 #
@@ -59,17 +59,18 @@ print_all_params() {
 	echo "=================================="
 	echo "App location: $app_location"
 	echo "Output file: $secured_app_output"
+	echo "Fusion Set ID: $fusion_set_id"
 	echo "Team ID: $team_id"
 	echo "Sign Method: $sign_method"
 	echo "Keystore file: $keystore_file" 
 	echo "Keystore password: $ks_pass" 
 	echo "Keystore alias: $keystore_alias" 
-	echo "Key password: $key_pass" 
+	echo "Key password: $private_key_pass" 
 	echo "Google Play Singing: $gp_signing"
 	echo "Google Fingerprint: $GOOGLE_SIGN_FINGERPRINT" 
 	echo "Sign Fingerprint: $SIGN_FINGERPRINT"
 	echo "Build with logs: $build_logs" 
-	echo "Build to test: $build_to_test" 
+	echo "Build to Test: $build_to_test" 
 	echo "Secured app output: $secured_app_output"
 	echo "Certificate output: $certificate_output"
 	echo "Secondary output: $secured_so_app_output"
@@ -83,9 +84,9 @@ download_file() {
 	curl -L $file_location --output $downloaded_file && echo $downloaded_file
 }
 
-internal_version="RS-A-3.5"
+internal_version="RS-A-3.6"
 echo "Internal version: $internal_version"
-export APPDOME_CLIENT_HEADER="Bitrise/3.5.0"
+export APPDOME_CLIENT_HEADER="Bitrise/3.6.0"
 
 app_location=$1
 fusion_set_id=$2
@@ -98,7 +99,11 @@ build_logs=$8
 build_to_test=$9
 secondary_output=${10}
 output_filename=${11}
-app_id=${12}
+certificate_file=${12}
+keystore_pass=${13}
+keystore_alias=${14}
+private_key_password=${15}
+app_id=""
 build_to_test=$(echo "$build_to_test" | tr '[:upper:]' '[:lower:]')
 
 if [[ -z $APPDOME_API_KEY ]]; then
@@ -153,6 +158,7 @@ fi
 
 certificate_output=$BITRISE_DEPLOY_DIR/certificate.pdf
 
+
 if [[ $team_id == "_@_" ]]; then
 	team_id=""
 	tm=""
@@ -170,14 +176,19 @@ cd appdome-api-bash
 
 echo "Android platform detected"
 
+if [[ $keystore_alias == "_@_" ]]; then
+	keystore_alias=""
+fi
+
+
 sf=""
-if [[ -n $fingerprint ]]; then
+if [[ $fingerprint != "_@_" ]]; then
 	sf="--signing_fingerprint ${fingerprint}"
 fi
 
 gp=""
 if [[ $gp_signing == "true" ]]; then
-	if [[ -z $google_fingerprint ]]; then
+	if [[ -z $google_fingerprint || $google_fingerprint == "_@_" ]]; then
 		if [[ -z $fingerprint ]]; then
 			echo "Google Sign Fingerprint must be provided for Google Play signing. Exiting."
 			exit 1
@@ -241,32 +252,50 @@ case $sign_method in
 							--certificate_output $certificate_output 
 						;;
 "On-Appdome")			
-						keystore_file=$(download_file $BITRISEIO_ANDROID_KEYSTORE_URL)
-						keystore_pass=$BITRISEIO_ANDROID_KEYSTORE_PASSWORD
+						if [[ $certificate_file == "_@_" || -z $certificate_file ]]; then
+							if [[ -n $BITRISEIO_ANDROID_KEYSTORE_URL ]]; then
+								certificate_file=$BITRISEIO_ANDROID_KEYSTORE_URL
+								keystore_pass=$BITRISEIO_ANDROID_KEYSTORE_PASSWORD
+								private_key_password=$BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
+								keystore_alias=$BITRISEIO_ANDROID_KEYSTORE_ALIAS
+							elif [[ -n $BITRISEIO_ANDROID_KEYSTORE_1_URL ]]; then
+									certificate_file=$BITRISEIO_ANDROID_KEYSTORE_1_URL
+									keystore_pass=$BITRISEIO_ANDROID_KEYSTORE_1_PASSWORD
+									private_key_password=$BITRISEIO_ANDROID_KEYSTORE_1_PRIVATE_KEY_PASSWORD
+									keystore_alias=$BITRISEIO_ANDROID_KEYSTORE_1_ALIAS
+							else
+								echo "Could not find keystore file. Please recheck Android keystore file environment variable. Exiting."
+								exit 1
+							fi
+						fi
+
+						keystore_file=$(download_file $certificate_file)
 						ks_pass=""
-						if [[ -n $keystore_pass ]]; then
+						if [[ -n $keystore_pass && $keystore_pass != "_@_" ]]; then
 							ks_pass="[REDACTED]"
 						fi
 
-						keystore_alias=$BITRISEIO_ANDROID_KEYSTORE_ALIAS
-						key_pass=$BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
+						private_key_pass=""
+						if [[ -n $private_key_password && $private_key_password != "_@_" ]]; then
+							private_key_pass="[REDACTED]"
+						fi
 												
 						print_all_params
 
-						if [[ -z $BITRISEIO_ANDROID_KEYSTORE_URL ]]; then
-							echo "Could not find keystore file. Please recheck keystore definition in the Code Signing & Files section."
+						if [[ ! -s $keystore_file ]]; then
+							echo "Failed obtaining keystore file. Please recheck Android keystore file environment variable. Exiting."
 							exit 1
 						fi
-						if [[ -z $keystore_pass ]]; then
-							echo "Could not find keystore password. Please recheck keystore definition in the Code Signing & Files section."
+						if [[ $keystore_pass == "_@_" ||  -z $keystore_pass ]]; then
+							echo "Could not find keystore password. Please recheck Android keystore file environment variable. Exiting."
 							exit 1
 						fi
-						if [[ -z $keystore_alias ]]; then
-							echo "Could not find keystore alias. Please recheck keystore definition in the Code Signing & Files section."
+						if [[ $keystore_alias == "_@_" || -z $keystore_alias ]]; then
+							echo "Could not find keystore alias. Please recheck Android keystore file environment variable. Exiting."
 							exit 1
 						fi
-						if [[ -z $key_pass ]]; then
-							echo "Could not find keystore alias. Please recheck keystore definition in the Code Signing & Files section."
+						if [[ $private_key_password == "_@_" || -z $private_key_password ]]; then
+							echo "Could not find keystore private key password. Please recheck Android keystore file environment variable. Exiting."
 							exit 1
 						fi
 
@@ -284,7 +313,7 @@ case $sign_method in
 							$bl \
 							$btv \
 							$so \
-							--key_pass "$key_pass" \
+							--key_pass "$private_key_password" \
 							$dso \
 							$aid \
 							--output "$secured_app_output" \
