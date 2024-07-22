@@ -176,6 +176,10 @@ cd appdome-api-bash
 
 echo "Android platform detected"
 
+if [[ $keystore_alias == "_@_" ]]; then
+	keystore_alias=""
+
+
 sf=""
 if [[ $fingerprint != "_@_" ]]; then
 	sf="--signing_fingerprint ${fingerprint}"
