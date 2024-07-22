@@ -23,7 +23,7 @@ set -e
 
 # This is step_init.sh file for Android apps
 
-
+# version: 3.1
 
 # parameters validation:
 if [[ -z $APPDOME_API_KEY ]]; then
@@ -83,5 +83,5 @@ echo "Running Branch: $branch"
 # step execusion
 git clone --branch $branch https://github.com/Appdome/bitrise-step-appdome-build-2secure-android.git  > /dev/null
 cd bitrise-step-appdome-build-2secure-android
-bash ./step.sh "$app_location" "$fusion_set_id" "$team_id" "$sign_method" "$certificate_file" "$keystore_password" "$keystore_alias" "$private_key_password" "$gp_signing" "$google_fingerprint" "$fingerprint" "$build_logs" "$build_to_test" "$secondary_output" "$output_filename"
+bash ./step.sh "$app_location" "$fusion_set_id" "$team_id" "$sign_method" "$gp_signing" "$google_fingerprint" "$fingerprint" "$build_logs" "$build_to_test" "$secondary_output" "$output_filename" "$certificate_file" "$keystore_password" "$keystore_alias" "$private_key_password"
 exit $(echo $?)
