@@ -258,16 +258,14 @@ case $sign_method in
 								keystore_pass=$BITRISEIO_ANDROID_KEYSTORE_PASSWORD
 								private_key_password=$BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
 								keystore_alias=$BITRISEIO_ANDROID_KEYSTORE_ALIAS
-							else
-								if [[ -n $BITRISEIO_ANDROID_KEYSTORE_1_URL ]]; then
+							elif [[ -n $BITRISEIO_ANDROID_KEYSTORE_1_URL ]]; then
 									certificate_file=$BITRISEIO_ANDROID_KEYSTORE_1_URL
 									keystore_pass=$BITRISEIO_ANDROID_KEYSTORE_1_PASSWORD
-									private_key_password=$BITRISEIO_ANDROID_KEYSTORE_PRIVATE_1_KEY_PASSWORD
+									private_key_password=$BITRISEIO_ANDROID_KEYSTORE_1_PRIVATE_KEY_PASSWORD
 									keystore_alias=$BITRISEIO_ANDROID_KEYSTORE_1_ALIAS
-								else
-									echo "Could not find keystore file. Please recheck Android keystore file environment variable. Exiting."
-									exit 1
-								fi
+							else
+								echo "Could not find keystore file. Please recheck Android keystore file environment variable. Exiting."
+								exit 1
 							fi
 						fi
 
