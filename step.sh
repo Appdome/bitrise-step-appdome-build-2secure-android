@@ -59,7 +59,7 @@ print_all_params() {
 	echo "=================================="
 	echo "App location: $app_location"
 	echo "Output file: $secured_app_output"
-	echo "Fusion Set: $fusion_set_id"
+	echo "Fusion Set ID: $fusion_set_id"
 	echo "Team ID: $team_id"
 	echo "Sign Method: $sign_method"
 	echo "Keystore file: $keystore_file" 
@@ -177,7 +177,7 @@ cd appdome-api-bash
 echo "Android platform detected"
 
 sf=""
-if [[ $fingerprint == "_@_" ]]; then
+if [[ $fingerprint != "_@_" ]]; then
 	sf="--signing_fingerprint ${fingerprint}"
 fi
 
@@ -293,6 +293,7 @@ case $sign_method in
 						fi
 						if [[ $private_key_password == "_@_" || -z $private_key_password ]]; then
 							echo "Could not find keystore private key password. Please recheck Android keystore file environment variable. Exiting."
+							echo ${private_key_password}
 							exit 1
 						fi
 
