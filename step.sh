@@ -59,17 +59,18 @@ print_all_params() {
 	echo "=================================="
 	echo "App location: $app_location"
 	echo "Output file: $secured_app_output"
+	echo "Fusion Set: $fusion_set_id"
 	echo "Team ID: $team_id"
 	echo "Sign Method: $sign_method"
 	echo "Keystore file: $keystore_file" 
 	echo "Keystore password: $ks_pass" 
 	echo "Keystore alias: $keystore_alias" 
-	echo "Key password: $private_key_password" 
+	echo "Key password: $private_key_pass" 
 	echo "Google Play Singing: $gp_signing"
 	echo "Google Fingerprint: $GOOGLE_SIGN_FINGERPRINT" 
 	echo "Sign Fingerprint: $SIGN_FINGERPRINT"
 	echo "Build with logs: $build_logs" 
-	echo "Build to test: $build_to_test" 
+	echo "Build to Test: $build_to_test" 
 	echo "Secured app output: $secured_app_output"
 	echo "Certificate output: $certificate_output"
 	echo "Secondary output: $secured_so_app_output"
@@ -267,8 +268,13 @@ case $sign_method in
 
 						keystore_file=$(download_file $certificate_file)
 						ks_pass=""
-						if [[ -n $keystore_pass ]]; then
-							ks_pass=$keystore_pass
+						if [[ -n $keystore_pass && $keystore_pass != "_@_" ]]; then
+							ks_pass="[REDACTED]"
+						fi
+
+						private_key_pass=""
+						if [[ -n $private_key_password && $private_key_password != "_@_" ]]; then
+							private_key_pass="[REDACTED]"
 						fi
 												
 						print_all_params
