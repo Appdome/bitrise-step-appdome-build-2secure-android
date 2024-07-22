@@ -178,6 +178,7 @@ echo "Android platform detected"
 
 if [[ $keystore_alias == "_@_" ]]; then
 	keystore_alias=""
+fi
 
 
 sf=""
