@@ -252,7 +252,7 @@ case $sign_method in
 							--certificate_output $certificate_output 
 						;;
 "On-Appdome")			
-						if [[ $certificate_file == "_@_" ]]; then
+						if [[ $certificate_file == "_@_" || -z $certificate_file ]]; then
 							if [[ -n $BITRISEIO_ANDROID_KEYSTORE_URL ]]; then
 								certificate_file=$BITRISEIO_ANDROID_KEYSTORE_URL
 								keystore_pass=$BITRISEIO_ANDROID_KEYSTORE_PASSWORD
