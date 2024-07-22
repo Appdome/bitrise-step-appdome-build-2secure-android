@@ -293,7 +293,6 @@ case $sign_method in
 						fi
 						if [[ $private_key_password == "_@_" || -z $private_key_password ]]; then
 							echo "Could not find keystore private key password. Please recheck Android keystore file environment variable. Exiting."
-							echo ${private_key_password}
 							exit 1
 						fi
 
