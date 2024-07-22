@@ -101,6 +101,35 @@ inputs:
         - "Auto-Dev-Signing"
         is_required: true
         
+    - certificate_file: 
+      opts:
+        title: "Code signing keystore evironment variable name (required for On-Appdome signing method)"
+        description: "Code signing keystore evironment variable name (as appears in the App Settings->Code Signing section) to use. 
+        If not provided, the FIRST certificate among the uploaded files to 'App Settings->Code signing' section will be used.
+        Only ONE certificate file is supported. For example: $BITRISEIO_ANDROID_KEYSTORE_URL"
+        is_required: false
+      
+    - keystore_password: 
+      opts:
+        title: "Keystore password evironment variable name (required for On-Appdome signing method)"
+        description: "Code signing keystore password evironment variable name (as appears in the App Settings->Code Signing section-><keystore file>) to use. 
+        Must be provided if certificate file was provided. For example: $BITRISEIO_ANDROID_KEYSTORE_PASSWORD"
+        is_required: false
+
+    - keystore_alias: 
+      opts:
+        title: "Keystore alias evironment variable name (required for On-Appdome signing method)"
+        description: "Code signing keystore alias evironment variable name (as appears in the App Settings->Code Signing section-><keystore file>) to use. 
+        Must be provided if certificate file was provided. For example: $BITRISEIO_ANDROID_KEYSTORE_ALIAS"
+        is_required: false
+
+    - private_key_password: 
+      opts:
+        title: "Keystore private key password evironment variable name (required for On-Appdome signing method)"
+        description: "Code signing private key password evironment variable name (as appears in the App Settings->Code Signing section-><keystore file>) to use. 
+        Must be provided if certificate file was provided. For example: $BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD"
+        is_required: false
+
     - gp_signing: "false"
       opts:
         title: "Google Play Signing"
@@ -125,12 +154,12 @@ inputs:
         is_required: false
         category: Private/Auto-Dev Signing
         
-    - app_id:
-      opts:
-        title: "Firebase App ID"
-        summary: "App ID in Firebase project. Required for code deobfuscation map uploading to Crashlytics."
-        is_required: false
-        category: Crashlytics
+    # - app_id:
+    #   opts:
+    #     title: "Firebase App ID"
+    #     summary: "App ID in Firebase project. Required for code deobfuscation map uploading to Crashlytics."
+    #     is_required: false
+    #     category: Crashlytics
 
     - secondary_output: "false"
       opts:
