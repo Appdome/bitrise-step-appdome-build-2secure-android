@@ -123,7 +123,7 @@ keystore_alias=${14}
 private_key_password=${15}
 app_id=""
 
-appdome_pipleline_values
+appdome_pipeline_values
 build_to_test=$(echo "$build_to_test" | tr '[:upper:]' '[:lower:]')
 
 if [[ -z $APPDOME_API_KEY ]]; then
