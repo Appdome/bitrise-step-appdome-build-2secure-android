@@ -23,6 +23,24 @@ set -e
 
 # This is step.sh file for Android apps
 
+appdome_pipeline_values () {
+	if [[ -n $APPDOME_PIPELINE_SIGNING_METHOD ]]; then
+		sign_method=$APPDOME_PIPELINE_SIGNING_METHOD
+	fi 
+
+	if [[ -n $APPDOME_PIPELINE_BUILD_WITH_LOGS ]]; then
+		build_logs=$APPDOME_PIPELINE_BUILD_WITH_LOGS
+	fi
+
+	if [[ -n $APPDOME_PIPELINE_BUILD_TO_TEST ]]; then
+		build_to_test=$APPDOME_PIPELINE_BUILD_TO_TEST
+	fi
+
+	if [[ -n $APPDOME_PIPELINE_GOOGLE_PLAY_SIGNING ]]; then
+		gp_signing=$APPDOME_PIPELINE_GOOGLE_PLAY_SIGNING
+	fi
+}
+
 debug () {
 	echo "Debugger:" > $BITRISE_DEPLOY_DIR/debug.txt
 	echo "Keystore file: $keystore_file" >> $BITRISE_DEPLOY_DIR/debug.txt
@@ -104,6 +122,8 @@ keystore_pass=${13}
 keystore_alias=${14}
 private_key_password=${15}
 app_id=""
+
+appdome_pipleline_values
 build_to_test=$(echo "$build_to_test" | tr '[:upper:]' '[:lower:]')
 
 if [[ -z $APPDOME_API_KEY ]]; then
@@ -252,7 +272,7 @@ case $sign_method in
 							--certificate_output $certificate_output 
 						;;
 "On-Appdome")			
-						if [[ $certificate_file == "_@_" ]]; then
+						if [[ $certificate_file == "_@_" || -z $certificate_file ]]; then
 							if [[ -n $BITRISEIO_ANDROID_KEYSTORE_URL ]]; then
 								certificate_file=$BITRISEIO_ANDROID_KEYSTORE_URL
 								keystore_pass=$BITRISEIO_ANDROID_KEYSTORE_PASSWORD
