@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-# file version: RS-A-3.6
+# file version: RS-A-3.6T
 # echo "This is the value specified for the input 'example_step_input': ${example_step_input}"
 
 #
@@ -102,7 +102,7 @@ download_file() {
 	curl -L $file_location --output $downloaded_file && echo $downloaded_file
 }
 
-internal_version="RS-A-3.6"
+internal_version="RS-A-3.6T"
 echo "Internal version: $internal_version"
 export APPDOME_CLIENT_HEADER="Bitrise/3.6.0"
 
