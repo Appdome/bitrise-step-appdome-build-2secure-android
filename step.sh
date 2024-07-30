@@ -24,10 +24,8 @@ set -e
 # This is step.sh file for Android apps
 
 appdome_pipeline_values () {
-	if [[ -n $APPDOME_PIPELINE_SIGNING_METHOD ]]; then
-		sign_method=$APPDOME_PIPELINE_SIGNING_METHOD
-	fi 
-
+	sign_method=$APPDOME_PIPELINE_SIGNING_METHOD
+	 
 	if [[ -n $APPDOME_PIPELINE_BUILD_WITH_LOGS ]]; then
 		build_logs=$APPDOME_PIPELINE_BUILD_WITH_LOGS
 	fi
