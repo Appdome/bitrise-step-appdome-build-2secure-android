@@ -90,6 +90,7 @@ print_all_params() {
 	echo "Secured app output: $secured_app_output"
 	echo "Certificate output: $certificate_output"
 	echo "Secondary output: $secured_so_app_output"
+	echo "Workflow output logs file: $workflow_output_logs"
 	echo "-----------------------------------------"
 }
 
