@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-# file version: RS-A-3.6T
+# file version: RS-A-3.7T
 # echo "This is the value specified for the input 'example_step_input': ${example_step_input}"
 
 #
@@ -119,6 +119,7 @@ certificate_file=${12}
 keystore_pass=${13}
 keystore_alias=${14}
 private_key_password=${15}
+workflow_output_logs=${16}
 app_id=""
 
 if [[ -n $APPDOME_PIPELINE_SIGNING_METHOD ]]; then
@@ -207,6 +208,11 @@ if [[ $fingerprint != "_@_" ]]; then
 	sf="--signing_fingerprint ${fingerprint}"
 fi
 
+wol=""
+if [[ $workflow_output_logs != "_@_" ]]; then
+	wol="--workflow_output_logs ${workflow_output_logs}"
+fi
+
 gp=""
 if [[ $gp_signing == "true" ]]; then
 	if [[ -z $google_fingerprint || $google_fingerprint == "_@_" ]]; then
@@ -250,6 +256,7 @@ case $sign_method in
 							$so \
 							$dso \
 							$aid \
+							$wol \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
@@ -269,6 +276,7 @@ case $sign_method in
 							$btv \
 							$dso \
 							$aid \
+							$wol \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
@@ -337,6 +345,7 @@ case $sign_method in
 							--key_pass "$private_key_password" \
 							$dso \
 							$aid \
+							$wol \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
@@ -357,6 +366,10 @@ fi
 
 if [[ -n $dso ]]; then 
 	envman add --key APPDOME_DEOB_MAPPING_FILES --value $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip
+fi
+
+if [[ -n $wol ]]; then 
+	envman add --key APPDOME_WORKFLOW_LOGS --value $BITRISE_DEPLOY_DIR/$workflow_output_logs
 fi
 
 envman add --key APPDOME_CERTIFICATE_PATH --value $certificate_output
