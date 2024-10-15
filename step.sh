@@ -65,7 +65,9 @@ debug () {
 		$bl \
 		$btv \
 		$so \
-		--key_pass $key_pass \
+		$dso \
+		$aid \
+		$wol \
 		--output $secured_app_output \
 		--certificate_output $certificate_output >> $BITRISE_DEPLOY_DIR/debug.txt
 }
