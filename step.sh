@@ -100,9 +100,9 @@ download_file() {
 	curl -L $file_location --output $downloaded_file && echo $downloaded_file
 }
 
-internal_version="RS-A-3.6T"
+internal_version="RS-A-3.7"
 echo "Internal version: $internal_version"
-export APPDOME_CLIENT_HEADER="Bitrise/3.6.0"
+export APPDOME_CLIENT_HEADER="Bitrise/3.7.0"
 
 app_location=$1
 fusion_set_id=$2
