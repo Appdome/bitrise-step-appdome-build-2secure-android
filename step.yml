@@ -8,14 +8,14 @@
 # - Bitrise CLI guides: http://devcenter.bitrise.io/bitrise-cli/
 
 title: |-
-  Appdome-Build-2Secure for iOS
+  Appdome-Build-2Secure for Android
 summary: |
-  Builds an iOS mobile app using Appdome's platform
+  Builds a mobile app using Appdome's platform
 description: |
   Integration that allows activating security and app protection features, building and signing mobile apps using Appdome's API. For details see: https://www.appdome.com/how-to/appsec-release-orchestration/mobile-appsec-cicd/use-appdome-build-2secure-step-for-bitrise
-website: https://github.com/Appdome/bitrise-step-appdome-build-2secure-ios
-source_code_url: https://github.com/Appdome/bitrise-step-appdome-build-2secure-ios
-support_url: https://github.com/Appdome/bitrise-step-appdome-build-2secure-ios/issues
+website: https://github.com/Appdome/bitrise-step-appdome-build-2secure-android
+source_code_url: https://github.com/Appdome/bitrise-step-appdome-build-2secure-android
+support_url: https://github.com/Appdome/bitrise-step-appdome-build-2secure-android/issues
 
 # If this step should be available only for certain project types
 # just uncomment this `project_type_tags` section and include all the
@@ -27,9 +27,9 @@ support_url: https://github.com/Appdome/bitrise-step-appdome-build-2secure-ios/i
 # https://github.com/bitrise-io/bitrise/blob/master/_docs/step-development-guideline.md
 #
 project_type_tags:
-  - ios
+#  - ios
 #   - macos
-#  - android
+  - android
 #   - xamarin
 #   - react-native
 #   - cordova
@@ -68,18 +68,18 @@ toolkit:
 
 
 inputs:
-    - app_location: $BITRISE_IPA_PATH 
+    - app_location:
       opts:
         title: "App file URL or EnvVar"
-        summary: "URL to app file (ipa) or an EnvVar representing its path (i.e. $BITRISE_IPA_PATH)"
+        summary: "URL to app file (apk/aab) or an EnvVar representing its path (i.e. $BITRISE_APK_PATH or $BITRISE_AAB_PATH)"
         is_required: true
-        
+
     - output_filename:
       opts:
         title: "Output file name (without extension)"
-        summary: "Output app file name (without extension). If not populated, the default output file name will be the same as the original app but with Appdome_ prefix."
+        summary: "Output app file name. The file extension (aab/apk) will be the same as the original app. If not specified, the default output file will be same as the original app but with Appdome_ prefix."
         is_required: false
-
+        
     - fusion_set_id: 
       opts:
         title: "Fusion set ID"
@@ -100,26 +100,39 @@ inputs:
         - "Auto-Dev-Signing"
         is_required: true
         
-    - certificate_file: 
+    - gp_signing: "false"
       opts:
-        title: "Code signing cetificates (.p12) file name"
-        description: "Code signing cetificate file name (from the uploaded code signing certificates) to use. If not provided, the LAST certificate among the uploaded files to 'Code Signing & Files' section will be used.
-        If you don't know the file name of the certificate you want to use, download the certificate from the Code Signing & Files section to your computer and type here its file name and extension as was downloaded.
-        Only ONE certificate file is supported."
+        title: "Google Play Signing"
+        description: "Sign the app for Google Play? If 'true', requires $SIGN_FINGERPRINT in the Secrets tab."
+        value_options:
+        - "true"
+        - "false"
+        is_required: true
+        category: Google Signing
+        
+    - google_fingerprint: $GOOGLE_SIGN_FINGERPRINT
+      opts:
+        title: "Google Sign Fingerprint"
+        description: "Google Sign Fingerprint for Google Play singing, or its Secret variable name."
+        is_required: false
+        category: Google Signing
+
+    - fingerprint: $SIGN_FINGERPRINT
+      opts:
+        title: "Sign Fingerprint"
+        description: "Sign Fingerprint (not for Google Play singing), or its Secret variable name."
+        is_required: false
+        category: Private/Auto-Dev Signing
+        
+    - secondary_output: "false"
+      opts:
+        title: "Secondary Output"
+        description: "Select 'true' to create a Universal.apk file (applies to .aab app types only)."
+        value_options:
+        - "true"
+        - "false"
         is_required: false
 
-    - provisioning_profiles: 
-      opts:
-        title: "Provisioning profile file name/s"
-        description: "List of provisioning profile file name/s (with no file extension, separated by commas) from the uploaded provisioning profiles to use. If not provided, all provisioning profiles uploaded to 'Code Signing & Files' section will be used."
-        is_required: false
-        
-    - entitlements: 
-      opts:
-        title: "iOS Entitlement EnvVar/s"
-        description: "iOS Entitlement EnvVar/s (separated by space), required for Auto-Dev-Singing and On-Appdome Signing."
-        is_required: false
-    
     - build_logs: "false"
       opts:
         title: "Build With Diagnostic Logs"
@@ -127,7 +140,7 @@ inputs:
         value_options:
         - "true"
         - "false"
-        is_required: true    
+        is_required: true
         
     - build_to_test: "None"
       opts:
@@ -146,7 +159,20 @@ inputs:
         - "Tosca"
         - "Saucelabs"
         is_required: true
-            
+        
+    - workflow_output_logs:
+      opts:
+        title: "Workflow output logs file name"
+        summary: "File name of the workflow logs."
+        is_required: false
+
+   # - app_signing_cert: 
+#      opts:
+#        title: "Signing Fingerprint"
+#        description: "Signing SHA-1/SHA-256 fingerprint"
+#        is_required: false
+#        
+        
 #   - output_location: 
 #      opts:
 #        title: "Build output file"
@@ -167,12 +193,24 @@ inputs:
 #        value_options: []
 
 outputs:
-- APPDOME_SECURED_IPA_PATH:  
+- APPDOME_SECURED_APK_PATH:  
   opts:    
-    title: Secured .ipa file path   
-    summary: Local path of the secured .ipa file
+    title: Secured .apk file path   
+    summary: Local path of the secured .apk file
     description: |
-        Local path of the secured .ipa file. Available when 'Signing Method' set to 'On-Appdome' or 'Private-Signing'
+        Local path of the secured .apk file. Available when 'Signing Method' set to 'On-Appdome' or 'Private-Signing'
+- APPDOME_SECURED_AAB_PATH:  
+  opts:    
+    title: Secured .aab file path   
+    summary: Local path of the secured .aab file
+    description: |
+        Local path of the secured .aab file. Available when 'Signing Method' set to 'On-Appdome' or 'Private-Signing'
+- APPDOME_SECURED_SO_PATH:  
+  opts:    
+    title: Secured secondary output file path (universal apk)
+    summary: Local path of the secured secondary output file
+    description: |
+       Local path of the secured secondary output file (universal apk). Available if Secondary Output is set to 'true' and the original app is .aab type
 - APPDOME_PRIVATE_SIGN_SCRIPT_PATH:  
   opts:    
     title: .sh sign script file path   
@@ -183,3 +221,7 @@ outputs:
   opts:    
     title: Certified Secure Certificate .pdf file path   
     summary: Local path of the Certified Secure Certificate .pdf file
+- APPDOME_WORKFLOW_LOGS:  
+  opts:    
+    title: Appdome workflow logs file 
+    summary: Local path of the Appdome workflow logs file 
