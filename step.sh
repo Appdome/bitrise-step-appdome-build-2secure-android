@@ -211,7 +211,8 @@ fi
 
 wol=""
 if [[ $workflow_output_logs != "_@_" ]]; then
-	wol="--workflow_output_logs $BITRISE_DEPLOY_DIR/$workflow_output_logs"
+	workflow_output_logs=$BITRISE_DEPLOY_DIR/$workflow_output_logs
+	wol="--workflow_output_logs $workflow_output_logs"
 fi
 
 gp=""
