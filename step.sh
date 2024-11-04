@@ -123,6 +123,7 @@ keystore_pass=${13}
 keystore_alias=${14}
 private_key_password=${15}
 workflow_output_logs=${16}
+
 app_id=""
 
 if [[ -n $APPDOME_PIPELINE_SIGNING_METHOD ]]; then
