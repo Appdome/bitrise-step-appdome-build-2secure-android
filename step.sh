@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-# file version: RS-A-3.6
+# file version: RS-A-3.7T
 # echo "This is the value specified for the input 'example_step_input': ${example_step_input}"
 
 #
@@ -22,6 +22,22 @@ set -e
 # Any non zero exit code will be registered as "failed" by `bitrise`.
 
 # This is step.sh file for Android apps
+
+appdome_pipeline_values () {
+	sign_method=$APPDOME_PIPELINE_SIGNING_METHOD
+	 
+	if [[ -n $APPDOME_PIPELINE_BUILD_WITH_LOGS ]]; then
+		build_logs=$APPDOME_PIPELINE_BUILD_WITH_LOGS
+	fi
+
+	if [[ -n $APPDOME_PIPELINE_BUILD_TO_TEST ]]; then
+		build_to_test=$APPDOME_PIPELINE_BUILD_TO_TEST
+	fi
+
+	if [[ -n $APPDOME_PIPELINE_GOOGLE_PLAY_SIGNING ]]; then
+		gp_signing=$APPDOME_PIPELINE_GOOGLE_PLAY_SIGNING
+	fi
+}
 
 debug () {
 	echo "Debugger:" > $BITRISE_DEPLOY_DIR/debug.txt
@@ -49,7 +65,9 @@ debug () {
 		$bl \
 		$btv \
 		$so \
-		--key_pass $key_pass \
+		$dso \
+		$aid \
+		$wol \
 		--output $secured_app_output \
 		--certificate_output $certificate_output >> $BITRISE_DEPLOY_DIR/debug.txt
 }
@@ -74,6 +92,7 @@ print_all_params() {
 	echo "Secured app output: $secured_app_output"
 	echo "Certificate output: $certificate_output"
 	echo "Secondary output: $secured_so_app_output"
+	echo "Workflow output logs file: $workflow_output_logs"
 	echo "-----------------------------------------"
 }
 
@@ -84,9 +103,9 @@ download_file() {
 	curl -L $file_location --output $downloaded_file && echo $downloaded_file
 }
 
-internal_version="RS-A-3.6"
+internal_version="RS-A-3.7"
 echo "Internal version: $internal_version"
-export APPDOME_CLIENT_HEADER="Bitrise/3.6.0"
+export APPDOME_CLIENT_HEADER="Bitrise/3.7.0"
 
 app_location=$1
 fusion_set_id=$2
@@ -103,7 +122,14 @@ certificate_file=${12}
 keystore_pass=${13}
 keystore_alias=${14}
 private_key_password=${15}
+workflow_output_logs=${16}
+
 app_id=""
+
+if [[ -n $APPDOME_PIPELINE_SIGNING_METHOD ]]; then
+	appdome_pipeline_values
+fi
+
 build_to_test=$(echo "$build_to_test" | tr '[:upper:]' '[:lower:]')
 
 if [[ -z $APPDOME_API_KEY ]]; then
@@ -186,6 +212,14 @@ if [[ $fingerprint != "_@_" ]]; then
 	sf="--signing_fingerprint ${fingerprint}"
 fi
 
+wol=""
+if [[ $workflow_output_logs != "_@_" ]]; then
+	workflow_output_logs=$BITRISE_DEPLOY_DIR/$workflow_output_logs
+	wol="--workflow_output_logs ${workflow_output_logs}"
+else
+	workflow_output_logs=""
+fi
+
 gp=""
 if [[ $gp_signing == "true" ]]; then
 	if [[ -z $google_fingerprint || $google_fingerprint == "_@_" ]]; then
@@ -229,6 +263,7 @@ case $sign_method in
 							$so \
 							$dso \
 							$aid \
+							$wol \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
@@ -248,6 +283,7 @@ case $sign_method in
 							$btv \
 							$dso \
 							$aid \
+							$wol \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
@@ -316,6 +352,7 @@ case $sign_method in
 							--key_pass "$private_key_password" \
 							$dso \
 							$aid \
+							$wol \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
@@ -336,6 +373,10 @@ fi
 
 if [[ -n $dso ]]; then 
 	envman add --key APPDOME_DEOB_MAPPING_FILES --value $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip
+fi
+
+if [[ -n $wol ]]; then 
+	envman add --key APPDOME_WORKFLOW_LOGS --value $BITRISE_DEPLOY_DIR/$workflow_output_logs
 fi
 
 envman add --key APPDOME_CERTIFICATE_PATH --value $certificate_output
