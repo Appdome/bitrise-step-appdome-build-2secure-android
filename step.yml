@@ -127,12 +127,13 @@ inputs:
     - download_deobfuscation: "false"
       opts:
         title: "Download deobfuscation mapping file?"
-        summary: "If checked, deobfuscation mapping zip file will be downloaded to the Artifacts."
-        description: "If checked, deobfuscation zip file will be downloaded to the Artifacts."
+        summary: "If true, deobfuscation mapping zip file will be downloaded to the Artifacts."
+        description: "If true, deobfuscation zip file will be downloaded to the Artifacts."
         value_options:
           - "true"
           - "false"
-        is_required: false
+        category: Deobfuscation Options
+        is_required: false     
 
     - crashlytics_app_id:
       opts:
