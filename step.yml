@@ -124,17 +124,6 @@ inputs:
         is_required: false
         category: Private/Auto-Dev Signing
 
-    - download_deobfuscation: "false"
-      opts:
-        title: "Download deobfuscation mapping file?"
-        summary: "Select 'true' to download deobfuscation mapping zip file to the Artifacts section."
-        description: "Select 'true' to download deobfuscation mapping zip file to the Artifacts section."
-        value_options:
-        - "true"
-        - "false"
-        category: Deobfuscation Options
-        is_required: false     
-
     - crashlytics_app_id:
       opts:
         title: "Crashlytics App ID"
