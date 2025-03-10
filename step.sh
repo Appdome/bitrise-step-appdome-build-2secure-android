@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-# file version: RS-A-3.7T
+# file version: RS-A-3.8
 # echo "This is the value specified for the input 'example_step_input': ${example_step_input}"
 
 #
@@ -103,9 +103,9 @@ download_file() {
 	curl -L $file_location --output $downloaded_file && echo $downloaded_file
 }
 
-internal_version="RS-A-3.7"
+internal_version="RS-A-3.8"
 echo "Internal version: $internal_version"
-export APPDOME_CLIENT_HEADER="Bitrise/3.7.0"
+export APPDOME_CLIENT_HEADER="Bitrise/3.8.0"
 
 app_location=$1
 fusion_set_id=$2
@@ -123,7 +123,10 @@ keystore_pass=${13}
 keystore_alias=${14}
 private_key_password=${15}
 workflow_output_logs=${16}
-app_id=""
+download_deobfuscation=${17}
+app_id=${18} 
+datadog_api_key=${19}
+
 
 if [[ -n $APPDOME_PIPELINE_SIGNING_METHOD ]]; then
 	appdome_pipeline_values
@@ -241,10 +244,18 @@ fi
 
 btv=""
 if [[ $build_to_test != "none" ]]; then
-	btv="--build_to_test_vendor  $build_to_test"
+	btv="--build_to_test_vendor $build_to_test"
 fi
 
-dso="-dso $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip"
+dso=""
+if [[ $download_deobfuscation == "true" ]]; then
+	dso="-dso $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip"
+fi
+
+dd=""
+if [[ -n $datadog_api_key ]]; then
+	dd="--dd_api_key $datadog_api_key"
+fi
 
 case $sign_method in
 "Private-Signing")		
@@ -261,6 +272,7 @@ case $sign_method in
 							$btv \
 							$so \
 							$dso \
+							$dd \
 							$aid \
 							$wol \
 							--output "$secured_app_output" \
@@ -281,6 +293,7 @@ case $sign_method in
 							$bl \
 							$btv \
 							$dso \
+							$dd \
 							$aid \
 							$wol \
 							--output "$secured_app_output" \
@@ -350,6 +363,7 @@ case $sign_method in
 							$so \
 							--key_pass "$private_key_password" \
 							$dso \
+							$dd \
 							$aid \
 							$wol \
 							--output "$secured_app_output" \
