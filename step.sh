@@ -150,22 +150,8 @@ else
 fi
 
 aid=""
-if [[ -n $GOOGLE_APPLICATION_CREDENTIALS ]]; then
-	if [[ $GOOGLE_APPLICATION_CREDENTIALS == *"http"* ]]; then
-		GOOGLE_APPLICATION_CREDENTIALS=../$(download_file $GOOGLE_APPLICATION_CREDENTIALS)
-	else
-		google_service_file=$GOOGLE_APPLICATION_CREDENTIALS
-		if [[ $google_service_file == *" "* ]];	then
-			GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS//" "/"_"}
-			cp "$google_service_file" "$GOOGLE_APPLICATION_CREDENTIALS"
-		fi
-	fi
-	envman add --key GOOGLE_APPLICATION_CREDENTIALS --value $GOOGLE_APPLICATION_CREDENTIALS
-	if [[ -n $app_id ]]; then 
-		aid="-aid $app_id"
-	fi
-else
-	echo "WARNING: GOOGLE_APPLICATION_CREDENTIALS file was not provided, deobfuscation map will not be uploaded to Crashlytics." 
+if [[ -n $app_id ]]; then 
+	aid="-aid $app_id"
 fi
 
 so=""
