@@ -132,16 +132,15 @@ inputs:
         value_options:
         - "true"
         - "false"
+        is_required: false    
         category: Deobfuscation Options
-        is_required: false     
-
+         
     - crashlytics_app_id:
       opts:
         title: "Crashlytics App ID"
         description: "Crashlytics App ID as appears in the Firebase account."
         is_required: false
         category: Deobfuscation Options
-        is_required: false
 
     - datadog_api_key:
       opts:
@@ -149,7 +148,6 @@ inputs:
         description: "Datadog API Key."
         is_required: false
         category: Deobfuscation Options
-        is_required: false
         
     - secondary_output: "false"
       opts:
