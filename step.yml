@@ -127,7 +127,7 @@ inputs:
     - download_deobfuscation: "false"
       opts:
         title: "Download deobfuscation mapping file?"
-        summary: "Select 'true' to download deobfuscation mapping zip file to the Artifacts section."
+        summary: "Select 'true' to download Appdome deobfuscation mapping zip file to the Artifacts section."
         description: "Select 'true' to download deobfuscation mapping zip file to the Artifacts section."
         value_options:
         - "true"
@@ -138,14 +138,14 @@ inputs:
     - crashlytics_app_id:
       opts:
         title: "Crashlytics App ID"
-        description: "Crashlytics App ID as appears in the Firebase account."
+        description: "Crashlytics App ID as appears in the Firebase account for auto upload Appdome deobfuscation mapping file."
         is_required: false
         category: Deobfuscation Options
 
     - datadog_api_key:
       opts:
         title: "Datadog API Key"
-        description: "Datadog API Key."
+        description: "Datadog API Key, for auto upload Appdome deobfuscation mapping file."
         is_required: false
         category: Deobfuscation Options
         
