@@ -123,6 +123,31 @@ inputs:
         description: "Sign Fingerprint (not for Google Play singing), or its Secret variable name."
         is_required: false
         category: Private/Auto-Dev Signing
+
+    - download_deobfuscation:
+      opts:
+        title: "Download deobfuscation mapping file?"
+        summary: "If checked, deobfuscation mapping zip file will be downloaded to the Artifacts."
+        description: "If checked, deobfuscation zip file will be downloaded to the Artifacts."
+        value_options:
+          - "Yes"
+          - "No"
+        is_required: false
+        value: "No"   
+
+    - crashlytics_app_id:
+      opts:
+        title: "Crashlytics App ID"
+        description: "Crashlytics App ID as appears in the Firebase account."
+        is_required: false
+        category: Deobfuscation Options
+
+    - datadog_api_key:
+      opts:
+        title: "Datadog API Key"
+        description: "Datadog API Key."
+        is_required: false
+        category: Deobfuscation Options
         
     - secondary_output: "false"
       opts:
@@ -160,6 +185,12 @@ inputs:
         - "Saucelabs"
         is_required: true
         
+    - workflow_output_logs:
+      opts:
+        title: "Workflow output logs file name"
+        summary: "File name of the workflow logs."
+        is_required: false
+
    # - app_signing_cert: 
 #      opts:
 #        title: "Signing Fingerprint"
@@ -215,3 +246,7 @@ outputs:
   opts:    
     title: Certified Secure Certificate .pdf file path   
     summary: Local path of the Certified Secure Certificate .pdf file
+- APPDOME_WORKFLOW_LOGS:  
+  opts:    
+    title: Appdome workflow logs file 
+    summary: Local path of the Appdome workflow logs file 

@@ -23,7 +23,7 @@ set -e
 
 # This is step_init.sh file for Android apps
 
-# version: 3.1
+# version: 3.4
 
 # parameters validation:
 if [[ -z $APPDOME_API_KEY ]]; then
@@ -77,6 +77,18 @@ if [[ -z $workflow_output_logs ]];then
     workflow_output_logs="_@_"
 fi
 
+if [[ $download_deobfuscation != "Yes" ]];then
+    deobfuscation_script_output="_@_"
+fi
+
+if [[ -z $crashlytics_app_id ]];then
+    crashlytics_app_id="_@_"
+fi
+
+if [[ -z $datadog_api_key ]];then
+    datadog_api_key="_@_"
+fi
+
 branch="RealStep"
 if [[ -n $APPDOME_BRANCH_ANDROID ]]; then
     branch=$APPDOME_BRANCH_ANDROID
@@ -86,5 +98,5 @@ echo "Running Branch: $branch"
 # step execusion
 git clone --branch $branch https://github.com/Appdome/bitrise-step-appdome-build-2secure-android.git  > /dev/null
 cd bitrise-step-appdome-build-2secure-android
-bash ./step.sh "$app_location" "$fusion_set_id" "$team_id" "$sign_method" "$gp_signing" "$google_fingerprint" "$fingerprint" "$build_logs" "$build_to_test" "$secondary_output" "$output_filename" "$certificate_file" "$keystore_password" "$keystore_alias" "$private_key_password" "$workflow_output_logs"
+bash ./step.sh "$app_location" "$fusion_set_id" "$team_id" "$sign_method" "$gp_signing" "$google_fingerprint" "$fingerprint" "$build_logs" "$build_to_test" "$secondary_output" "$output_filename" "$certificate_file" "$keystore_password" "$keystore_alias" "$private_key_password" "$workflow_output_logs" "$download_deobfuscation" "$crashlytics_app_id" "$datadog_api_key"
 exit $(echo $?)
