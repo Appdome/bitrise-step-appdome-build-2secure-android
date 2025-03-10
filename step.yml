@@ -138,7 +138,7 @@ inputs:
     - crashlytics_app_id:
       opts:
         title: "Crashlytics App ID"
-        description: "Crashlytics App ID as appears in the Firebase account for auto upload Appdome deobfuscation mapping file."
+        description: "Crashlytics App ID as appears in the Firebase account, for auto upload Appdome deobfuscation mapping file."
         is_required: false
         category: Deobfuscation Options
 
