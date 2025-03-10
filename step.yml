@@ -166,6 +166,33 @@ inputs:
         summary: "File name of the workflow logs."
         is_required: false
 
+    - download_deobfuscation: "false"
+      opts:
+        title: "Download deobfuscation mapping file?"
+        summary: "Select 'true' to download deobfuscation mapping zip file to the Artifacts section."
+        description: "Select 'true' to download deobfuscation mapping zip file to the Artifacts section."
+        value_options:
+        - "true"
+        - "false"
+        category: Deobfuscation Options
+        is_required: false     
+
+    - crashlytics_app_id:
+      opts:
+        title: "Crashlytics App ID"
+        description: "Crashlytics App ID as appears in the Firebase account."
+        is_required: false
+        category: Deobfuscation Options
+        is_required: false
+
+    - datadog_api_key:
+      opts:
+        title: "Datadog API Key"
+        description: "Datadog API Key."
+        is_required: false
+        category: Deobfuscation Options
+        is_required: false
+
    # - app_signing_cert: 
 #      opts:
 #        title: "Signing Fingerprint"
