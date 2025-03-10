@@ -128,7 +128,7 @@ inputs:
       opts:
         title: "Download deobfuscation mapping file?"
         summary: "Select 'true' to download Appdome deobfuscation mapping zip file to the Artifacts section."
-        description: "Select 'true' to download deobfuscation mapping zip file to the Artifacts section."
+        description: "Select 'true' to download Appdome deobfuscation mapping zip file to the Artifacts section."
         value_options:
         - "true"
         - "false"
