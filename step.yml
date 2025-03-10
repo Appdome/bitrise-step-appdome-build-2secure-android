@@ -127,11 +127,11 @@ inputs:
     - download_deobfuscation: "false"
       opts:
         title: "Download deobfuscation mapping file?"
-        summary: "If true, deobfuscation mapping zip file will be downloaded to the Artifacts."
-        description: "If true, deobfuscation zip file will be downloaded to the Artifacts."
+        summary: "Select 'true' to download deobfuscation mapping zip file to the Artifacts section."
+        description: "Select 'true' to download deobfuscation mapping zip file to the Artifacts section."
         value_options:
-          - "true"
-          - "false"
+        - "true"
+        - "false"
         category: Deobfuscation Options
         is_required: false     
 
