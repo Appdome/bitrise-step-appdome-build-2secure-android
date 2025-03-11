@@ -256,9 +256,6 @@ if [[ $datadog_api_key != "_@_" ]]; then
 	dd="--dd_api_key $datadog_api_key"
 fi
 
-echo "Printing app file:"
-cat $app_file
-
 case $sign_method in
 "Private-Signing")		
 						if [[ $APPDOME_DEBUG == "1" ]]; then
