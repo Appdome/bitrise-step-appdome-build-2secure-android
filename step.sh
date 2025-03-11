@@ -93,6 +93,9 @@ print_all_params() {
 	echo "Certificate output: $certificate_output"
 	echo "Secondary output: $secured_so_app_output"
 	echo "Workflow output logs file: $workflow_output_logs"
+	echo "Deobfuscation mapping files location: $deob_output"
+	echo "Crashlytics app id: $app_id"
+	echo "Datadog API key: $datadog_api_key"
 	echo "-----------------------------------------"
 }
 
@@ -234,8 +237,10 @@ if [[ $build_to_test != "none" ]]; then
 fi
 
 dso=""
+deob_output=""
 if [[ $download_deobfuscation == "true" ]]; then
-	dso="-dso $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip"
+	deob_output=$BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip
+	dso="-dso ${deob_output}"
 fi
 
 dd=""
