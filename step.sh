@@ -161,7 +161,7 @@ else
 fi
 
 aid=""
-if [[ -n $app_id ]]; then 
+if [[ $app_id != "_@_" ]]; then 
 	aid="-aid $app_id"
 fi
 
@@ -252,7 +252,7 @@ if [[ $download_deobfuscation == "true" ]]; then
 fi
 
 dd=""
-if [[ -n $datadog_api_key ]]; then
+if [[ $datadog_api_key != "_@_" ]]; then
 	dd="--dd_api_key $datadog_api_key"
 fi
 
@@ -337,7 +337,7 @@ case $sign_method in
 						if [[ $APPDOME_DEBUG == "1" ]]; then
 							debug
 						fi
-										
+
 						print_all_params
 
 						if [[ ! -s $keystore_file ]]; then
