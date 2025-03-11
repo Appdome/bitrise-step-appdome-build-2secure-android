@@ -40,6 +40,7 @@ appdome_pipeline_values () {
 }
 
 debug () {
+	echo "Running in Debug mode... Please wait for completion."
 	echo "Debugger:" > $BITRISE_DEPLOY_DIR/debug.txt
 	echo "Keystore file: $keystore_file" >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo "Keystore alias: $keystore_alias" >> $BITRISE_DEPLOY_DIR/debug.txt
@@ -66,10 +67,12 @@ debug () {
 		$btv \
 		$so \
 		$dso \
+		$dd \
 		$aid \
 		$wol \
 		--output $secured_app_output \
 		--certificate_output $certificate_output >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo "Done. See debug.txt in Artifacts section for results."
 }
 
 print_all_params() {
@@ -246,6 +249,15 @@ fi
 dd=""
 if [[ -n $datadog_api_key ]]; then
 	dd="--dd_api_key $datadog_api_key"
+fi
+
+if [[ $APPDOME_DEBUG == "1" ]]; then
+	debug
+	cd $PWD/..
+	pwd=$PWD
+	cd $PWD/..
+	rm -rf $pwd
+	exit 0
 fi
 
 case $sign_method in
