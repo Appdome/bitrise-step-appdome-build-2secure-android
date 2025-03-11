@@ -73,6 +73,11 @@ debug () {
 		--output $secured_app_output \
 		--certificate_output $certificate_output >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo "Done. See debug.txt in Artifacts section for results."
+	cd $PWD/..
+	pwd=$PWD
+	cd $PWD/..
+	rm -rf $pwd
+	exit 0
 }
 
 print_all_params() {
@@ -251,17 +256,12 @@ if [[ -n $datadog_api_key ]]; then
 	dd="--dd_api_key $datadog_api_key"
 fi
 
-if [[ $APPDOME_DEBUG == "1" ]]; then
-	debug
-	cd $PWD/..
-	pwd=$PWD
-	cd $PWD/..
-	rm -rf $pwd
-	exit 0
-fi
 
 case $sign_method in
 "Private-Signing")		
+						if [[ $APPDOME_DEBUG == "1" ]]; then
+							debug
+						fi
 						print_all_params
 						echo "Private Signing"
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
@@ -285,6 +285,9 @@ case $sign_method in
 						echo "Auto Dev Signing"
 						secured_app_output_name=${secured_app_output%.*}
 						secured_app_output=$secured_app_output_name.sh
+						if [[ $APPDOME_DEBUG == "1" ]]; then
+							debug
+						fi
 						print_all_params
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
 							--app $app_file \
@@ -330,7 +333,11 @@ case $sign_method in
 						if [[ -n $private_key_password && $private_key_password != "_@_" ]]; then
 							private_key_pass="[REDACTED]"
 						fi
-												
+
+						if [[ $APPDOME_DEBUG == "1" ]]; then
+							debug
+						fi
+										
 						print_all_params
 
 						if [[ ! -s $keystore_file ]]; then
