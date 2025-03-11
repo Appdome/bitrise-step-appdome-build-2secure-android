@@ -253,7 +253,7 @@ fi
 
 dd=""
 if [[ $datadog_api_key != "_@_" ]]; then
-	dd="--dd_api_key $datadog_api_key"
+	dd="-dd_api_key $datadog_api_key"
 fi
 
 case $sign_method in
