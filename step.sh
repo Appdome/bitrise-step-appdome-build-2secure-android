@@ -256,6 +256,8 @@ if [[ $datadog_api_key != "_@_" ]]; then
 	dd="--dd_api_key $datadog_api_key"
 fi
 
+echo "Printing app file:"
+cat $app_file
 
 case $sign_method in
 "Private-Signing")		
@@ -381,8 +383,6 @@ case $sign_method in
 						;;
 esac
 
-echo "Printing app file:"
-cat $app_file
 # rm -rf appdome-api-bash
 if [[ $secured_app_output == *.sh ]]; then
 	envman add --key APPDOME_PRIVATE_SIGN_SCRIPT_PATH --value $secured_app_output
