@@ -273,6 +273,7 @@ if [[ $datadog_api_key != "_@_" ]]; then
 fi
 
 sign_command=""
+cmd=""
 
 case $sign_method in
 "Private-Signing")		
