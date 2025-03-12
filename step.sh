@@ -280,7 +280,7 @@ case $sign_method in
 						sign_command="--private_signing"
 						print_all_params
 						cmd='--api_key $APPDOME_API_KEY \
-							--app $app_file \
+							--app "$app_file" \
 							--fusion_set_id $fusion_set_id \
 							$tm \
 							$sign_command \
@@ -308,7 +308,7 @@ case $sign_method in
 						
 						print_all_params
 						cmd='--api_key $APPDOME_API_KEY \
-							--app $app_file \
+							--app "$app_file" \
 							--fusion_set_id $fusion_set_id \
 							$tm \
 							$sign_command \
@@ -382,7 +382,7 @@ case $sign_method in
 						fi
 
 						cmd='--api_key $APPDOME_API_KEY \
-							--app $app_file \
+							--app "$app_file" \
 							--fusion_set_id $fusion_set_id \
 							$tm \
 							$sign_command \
