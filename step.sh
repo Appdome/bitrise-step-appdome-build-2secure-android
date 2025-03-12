@@ -278,11 +278,8 @@ case $sign_method in
 "Private-Signing")		
 						echo "Private Signing"
 						sign_command="--private_signing"
-						if [[ $APPDOME_DEBUG == "1" ]]; then
-							debug
-						fi
 						print_all_params
-						cmd="--api_key $APPDOME_API_KEY \
+						cmd='--api_key $APPDOME_API_KEY \
 							--app $app_file \
 							--fusion_set_id $fusion_set_id \
 							$tm \
@@ -297,18 +294,20 @@ case $sign_method in
 							$aid \
 							$wol \
 							--output "$secured_app_output" \
-							--certificate_output $certificate_output"
+							--certificate_output "$certificate_output"'
+
+						if [[ $APPDOME_DEBUG == "1" ]]; then
+							debug
+						fi
 						;;
 "Auto-Dev-Signing")		
 						echo "Auto Dev Signing"
 						sign_command="--auto_dev_private_signing"
 						secured_app_output_name=${secured_app_output%.*}
 						secured_app_output=$secured_app_output_name.sh
-						if [[ $APPDOME_DEBUG == "1" ]]; then
-							debug
-						fi
+						
 						print_all_params
-						cmd="--api_key $APPDOME_API_KEY \
+						cmd='--api_key $APPDOME_API_KEY \
 							--app $app_file \
 							--fusion_set_id $fusion_set_id \
 							$tm \
@@ -322,7 +321,11 @@ case $sign_method in
 							$aid \
 							$wol \
 							--output "$secured_app_output" \
-							--certificate_output $certificate_output" 
+							--certificate_output "$certificate_output"'
+						
+						if [[ $APPDOME_DEBUG == "1" ]]; then
+							debug
+						fi
 						;;
 "On-Appdome")			
 						echo "On Appdome Signing"
@@ -379,7 +382,7 @@ case $sign_method in
 							exit 1
 						fi
 
-						cmd="--api_key $APPDOME_API_KEY \
+						cmd='--api_key $APPDOME_API_KEY \
 							--app $app_file \
 							--fusion_set_id $fusion_set_id \
 							$tm \
@@ -397,7 +400,10 @@ case $sign_method in
 							$aid \
 							$wol \
 							--output "$secured_app_output" \
-							--certificate_output $certificate_output" 
+							--certificate_output "$certificate_output"'
+						if [[ $APPDOME_DEBUG == "1" ]]; then
+							debug
+						fi
 						;;
 esac
 
