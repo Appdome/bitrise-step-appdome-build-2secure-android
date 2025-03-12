@@ -41,37 +41,53 @@ appdome_pipeline_values () {
 
 debug () {
 	echo "Running in Debug mode... Please wait for completion."
-	echo "Debugger:" > $BITRISE_DEPLOY_DIR/debug.txt
+	echo "DEBUG DATA:" > $BITRISE_DEPLOY_DIR/debug.txt
+	echo "-----------" > $BITRISE_DEPLOY_DIR/debug.txt
+	echo "App: $app_file" >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo "API key: $APPDOME_API_KEY" >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo "Sign method: $sign_method" >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo "Sign command: $sign_command" >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo "Keystore file: $keystore_file" >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo "Keystore alias: $keystore_alias" >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo "Keystore pass: $keystore_pass" >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo "Fusion set ID: $fusion_set_id" >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo "TM: $tm" >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo "FP: $gp" >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo "SF: $sf" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "BL: $bl" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "BTV: $btv" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "SO: $so" >> $BITRISE_DEPLOY_DIR/debug.txt 
-
+	echo "DSO: $dso" >> $BITRISE_DEPLOY_DIR/debug.txt 
+	echo "DD: $dd" >> $BITRISE_DEPLOY_DIR/debug.txt 
+	echo "AID: $aid" >> $BITRISE_DEPLOY_DIR/debug.txt 
+	echo "WOL: $wol" >> $BITRISE_DEPLOY_DIR/debug.txt 
+	echo "Secured output: $secured_app_output" >> $BITRISE_DEPLOY_DIR/debug.txt 
+	echo "Certificate output: $certificate_output" >> $BITRISE_DEPLOY_DIR/debug.txt 
+	echo >> $BITRISE_DEPLOY_DIR/debug.txt
+	pwd >> $BITRISE_DEPLOY_DIR/debug.txt
 	ls -al >> $BITRISE_DEPLOY_DIR/debug.txt
 	ls -al .. >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo >> $BITRISE_DEPLOY_DIR/debug.txt
-	echo --api_key $APPDOME_API_KEY \
-		--app $app_file \
-		--fusion_set_id $fusion_set_id \
-		$tm \
-		--sign_on_appdome \
-		--keystore $keystore_file \
-		--keystore_pass $keystore_pass \
-		--keystore_alias $keystore_alias \
-		$gp \
-		$sf \
-		$bl \
-		$btv \
-		$so \
-		$dso \
-		$dd \
-		$aid \
-		$wol \
-		--output $secured_app_output \
-		--certificate_output $certificate_output >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo ./appdome_api $cmd >> $BITRISE_DEPLOY_DIR/debug.txt
+	# echo --api_key $APPDOME_API_KEY \
+	# 	--app $app_file \
+	# 	--fusion_set_id $fusion_set_id \
+	# 	$tm \
+	# 	$sign_command \
+	# 	--keystore $keystore_file \
+	# 	--keystore_pass $keystore_pass \
+	# 	--keystore_alias $keystore_alias \
+	# 	$gp \
+	# 	$sf \
+	# 	$bl \
+	# 	$btv \
+	# 	$so \
+	# 	$dso \
+	# 	$dd \
+	# 	$aid \
+	# 	$wol \
+	# 	--output $secured_app_output \
+	# 	--certificate_output $certificate_output >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo "Done. See debug.txt in Artifacts section for results."
 	cd $PWD/..
 	pwd=$PWD
@@ -256,18 +272,21 @@ if [[ $datadog_api_key != "_@_" ]]; then
 	dd="-dd_api_key $datadog_api_key"
 fi
 
+sign_command=""
+
 case $sign_method in
 "Private-Signing")		
+						echo "Private Signing"
+						sign_command="--private_signing"
 						if [[ $APPDOME_DEBUG == "1" ]]; then
 							debug
 						fi
 						print_all_params
-						echo "Private Signing"
-						./appdome_api.sh --api_key $APPDOME_API_KEY \
+						cmd="--api_key $APPDOME_API_KEY \
 							--app $app_file \
 							--fusion_set_id $fusion_set_id \
 							$tm \
-							--private_signing \
+							$sign_command \
 							$gp \
 							$sf \
 							$bl \
@@ -278,21 +297,22 @@ case $sign_method in
 							$aid \
 							$wol \
 							--output "$secured_app_output" \
-							--certificate_output $certificate_output 
+							--certificate_output $certificate_output"
 						;;
 "Auto-Dev-Signing")		
 						echo "Auto Dev Signing"
+						sign_command="--auto_dev_private_signing"
 						secured_app_output_name=${secured_app_output%.*}
 						secured_app_output=$secured_app_output_name.sh
 						if [[ $APPDOME_DEBUG == "1" ]]; then
 							debug
 						fi
 						print_all_params
-						./appdome_api.sh --api_key $APPDOME_API_KEY \
+						cmd="--api_key $APPDOME_API_KEY \
 							--app $app_file \
 							--fusion_set_id $fusion_set_id \
 							$tm \
-							--auto_dev_private_signing \
+							$sign_command \
 							$gp \
 							$sf \
 							$bl \
@@ -302,9 +322,12 @@ case $sign_method in
 							$aid \
 							$wol \
 							--output "$secured_app_output" \
-							--certificate_output $certificate_output 
+							--certificate_output $certificate_output" 
 						;;
 "On-Appdome")			
+						echo "On Appdome Signing"
+						sign_command="--sign_on_appdome"
+						secured_app_output_name=${secured_app_outp
 						if [[ $certificate_file == "_@_" || -z $certificate_file ]]; then
 							if [[ -n $BITRISEIO_ANDROID_KEYSTORE_URL ]]; then
 								certificate_file=$BITRISEIO_ANDROID_KEYSTORE_URL
@@ -356,13 +379,11 @@ case $sign_method in
 							exit 1
 						fi
 
-
-						echo "On Appdome Signing"
-						./appdome_api.sh --api_key $APPDOME_API_KEY \
+						cmd="--api_key $APPDOME_API_KEY \
 							--app $app_file \
 							--fusion_set_id $fusion_set_id \
 							$tm \
-							--sign_on_appdome \
+							$sign_command \
 							--keystore $keystore_file \
 							--keystore_pass "$keystore_pass" \
 							--keystore_alias "$keystore_alias" \
@@ -376,9 +397,11 @@ case $sign_method in
 							$aid \
 							$wol \
 							--output "$secured_app_output" \
-							--certificate_output $certificate_output 
+							--certificate_output $certificate_output" 
 						;;
 esac
+
+./appdome_api.sh $cmd
 
 # rm -rf appdome-api-bash
 if [[ $secured_app_output == *.sh ]]; then
