@@ -406,7 +406,7 @@ case $sign_method in
 						;;
 esac
 
-./appdome_api.sh $cmd
+./appdome_api.sh ${cmd}
 
 # rm -rf appdome-api-bash
 if [[ $secured_app_output == *.sh ]]; then
