@@ -68,8 +68,8 @@ debug () {
 	ls -al >> $BITRISE_DEPLOY_DIR/debug.txt
 	ls -al .. >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo >> $BITRISE_DEPLOY_DIR/debug.txt
-	echo ./appdome_api.sh $cmd >> $BITRISE_DEPLOY_DIR/debug.txt
-	echo --api_key $APPDOME_API_KEY \
+	echo "Command line (valid for On Appdome Sign only):" >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo ./appdome_api.sh  --api_key $APPDOME_API_KEY \
 		--app $app_file \
 		--fusion_set_id $fusion_set_id \
 		$tm \
@@ -408,7 +408,6 @@ case $sign_method in
 esac
 
 
-# rm -rf appdome-api-bash
 if [[ $secured_app_output == *.sh ]]; then
 	envman add --key APPDOME_PRIVATE_SIGN_SCRIPT_PATH --value $secured_app_output
 elif [[ $secured_app_output == *.apk ]]; then
