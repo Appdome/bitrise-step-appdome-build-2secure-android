@@ -68,7 +68,7 @@ debug () {
 	ls -al >> $BITRISE_DEPLOY_DIR/debug.txt
 	ls -al .. >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo >> $BITRISE_DEPLOY_DIR/debug.txt
-	echo ./appdome_api $cmd >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo ./appdome_api.sh $cmd >> $BITRISE_DEPLOY_DIR/debug.txt
 	# echo --api_key $APPDOME_API_KEY \
 	# 	--app $app_file \
 	# 	--fusion_set_id $fusion_set_id \
@@ -382,7 +382,7 @@ case $sign_method in
 							exit 1
 						fi
 
-						cmd='--api_key $APPDOME_API_KEY'
+						cmd="--api_key $APPDOME_API_KEY"
 						cmd="$cmd --app "$app_file""
 						cmd="$cmd --fusion_set_id $fusion_set_id"
 						cmd="$cmd $tm"
