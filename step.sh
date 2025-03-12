@@ -330,7 +330,6 @@ case $sign_method in
 "On-Appdome")			
 						echo "On Appdome Signing"
 						sign_command="--sign_on_appdome"
-						secured_app_output_name=${secured_app_outp
 						if [[ $certificate_file == "_@_" || -z $certificate_file ]]; then
 							if [[ -n $BITRISEIO_ANDROID_KEYSTORE_URL ]]; then
 								certificate_file=$BITRISEIO_ANDROID_KEYSTORE_URL
