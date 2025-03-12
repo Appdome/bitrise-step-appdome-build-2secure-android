@@ -69,25 +69,25 @@ debug () {
 	ls -al .. >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo ./appdome_api.sh $cmd >> $BITRISE_DEPLOY_DIR/debug.txt
-	# echo --api_key $APPDOME_API_KEY \
-	# 	--app $app_file \
-	# 	--fusion_set_id $fusion_set_id \
-	# 	$tm \
-	# 	$sign_command \
-	# 	--keystore $keystore_file \
-	# 	--keystore_pass $keystore_pass \
-	# 	--keystore_alias $keystore_alias \
-	# 	$gp \
-	# 	$sf \
-	# 	$bl \
-	# 	$btv \
-	# 	$so \
-	# 	$dso \
-	# 	$dd \
-	# 	$aid \
-	# 	$wol \
-	# 	--output $secured_app_output \
-	# 	--certificate_output $certificate_output >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo --api_key $APPDOME_API_KEY \
+		--app $app_file \
+		--fusion_set_id $fusion_set_id \
+		$tm \
+		$sign_command \
+		--keystore $keystore_file \
+		--keystore_pass $keystore_pass \
+		--keystore_alias $keystore_alias \
+		$gp \
+		$sf \
+		$bl \
+		$btv \
+		$so \
+		$dso \
+		$dd \
+		$aid \
+		$wol \
+		--output $secured_app_output \
+		--certificate_output $certificate_output >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo "Done. See debug.txt in Artifacts section for results."
 	cd $PWD/..
 	pwd=$PWD
@@ -280,11 +280,14 @@ case $sign_method in
 						echo "Private Signing"
 						sign_command="--private_signing"
 						print_all_params
-						cmd='--api_key $APPDOME_API_KEY \
-							--app "$app_file" \
+						if [[ $APPDOME_DEBUG == "1" ]]; then
+							debug
+						fi
+						c./appdome_api.sh --api_key $APPDOME_API_KEY \
+							--app $app_file \
 							--fusion_set_id $fusion_set_id \
 							$tm \
-							$sign_command \
+							--private_signing \
 							$gp \
 							$sf \
 							$bl \
@@ -295,11 +298,7 @@ case $sign_method in
 							$aid \
 							$wol \
 							--output "$secured_app_output" \
-							--certificate_output "$certificate_output"'
-
-						if [[ $APPDOME_DEBUG == "1" ]]; then
-							debug
-						fi
+							--certificate_output $certificate_output 
 						;;
 "Auto-Dev-Signing")		
 						echo "Auto Dev Signing"
@@ -308,11 +307,15 @@ case $sign_method in
 						secured_app_output=$secured_app_output_name.sh
 						
 						print_all_params
-						cmd='--api_key $APPDOME_API_KEY \
-							--app "$app_file" \
+						if [[ $APPDOME_DEBUG == "1" ]]; then
+							debug
+						fi
+
+						./appdome_api.sh --api_key $APPDOME_API_KEY \
+							--app $app_file \
 							--fusion_set_id $fusion_set_id \
 							$tm \
-							$sign_command \
+							--auto_dev_private_signing \
 							$gp \
 							$sf \
 							$bl \
@@ -322,11 +325,7 @@ case $sign_method in
 							$aid \
 							$wol \
 							--output "$secured_app_output" \
-							--certificate_output "$certificate_output"'
-						
-						if [[ $APPDOME_DEBUG == "1" ]]; then
-							debug
-						fi
+							--certificate_output $certificate_output 
 						;;
 "On-Appdome")			
 						echo "On Appdome Signing"
@@ -382,32 +381,32 @@ case $sign_method in
 							exit 1
 						fi
 
-						cmd="--api_key $APPDOME_API_KEY"
-						cmd="$cmd --app "$app_file""
-						cmd="$cmd --fusion_set_id $fusion_set_id"
-						cmd="$cmd $tm"
-						cmd="$cmd $sign_command"
-						cmd="$cmd --keystore "$keystore_file""
-						cmd="$cmd --keystore_pass "$keystore_pass""
-						cmd="$cmd --keystore_alias "$keystore_alias""
-						cmd="$cmd --key_pass "$private_key_password""
-						cmd="$cmd $gp"
-						cmd="$cmd $bl"
-						cmd="$cmd $btv"
-						cmd="$cmd $so"
-						cmd="$cmd $dso"
-						cmd="$cmd $dd"
-						cmd="$cmd $aid"
-						cmd="$cmd $wol"
-						cmd="$cmd --output "$secured_app_output""
-						cmd="$cmd --certificate_output "$certificate_output""
 						if [[ $APPDOME_DEBUG == "1" ]]; then
 							debug
 						fi
+
+						./appdome_api.sh --api_key $APPDOME_API_KEY \
+							--app $app_file \
+							--fusion_set_id $fusion_set_id \
+							$tm \
+							--sign_on_appdome \
+							--keystore $keystore_file \
+							--keystore_pass "$keystore_pass" \
+							--keystore_alias "$keystore_alias" \
+							$gp \
+							$bl \
+							$btv \
+							$so \
+							--key_pass "$private_key_password" \
+							$dso \
+							$dd \
+							$aid \
+							$wol \
+							--output "$secured_app_output" \
+							--certificate_output $certificate_output 
 						;;
 esac
 
-./appdome_api.sh $cmd
 
 # rm -rf appdome-api-bash
 if [[ $secured_app_output == *.sh ]]; then
