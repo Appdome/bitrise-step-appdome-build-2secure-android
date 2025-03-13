@@ -40,21 +40,21 @@ if [[ -z $output_filename ]];then
     output_filename="_@_"
 fi
 
-if [[ -z $certificate_file ]];then
-    certificate_file="_@_"
-fi
+# if [[ -z $certificate_file ]];then
+#     certificate_file="_@_"
+# fi
 
-if [[ -z $keystore_password ]];then
-    keystore_password="_@_"
-fi
+# if [[ -z $keystore_password ]];then
+#     keystore_password="_@_"
+# fi
 
-if [[ -z $keystore_alias ]];then
-    keystore_alias="_@_"
-fi
+# if [[ -z $keystore_alias ]];then
+#     keystore_alias="_@_"
+# fi
 
-if [[ -z $private_key_password ]];then
-    private_key_password="_@_"
-fi
+# if [[ -z $private_key_password ]];then
+#     private_key_password="_@_"
+# fi
 
 if [[ -z $fusion_set_id ]];then
     echo "No Fusion Set ID was provided. Exiting."
@@ -94,5 +94,6 @@ echo "Running Branch: $branch"
 # step execusion
 git clone --branch $branch https://github.com/Appdome/bitrise-step-appdome-build-2secure-android.git  > /dev/null
 cd bitrise-step-appdome-build-2secure-android
-bash ./step.sh "$app_location" "$fusion_set_id" "$team_id" "$sign_method" "$gp_signing" "$google_fingerprint" "$fingerprint" "$build_logs" "$build_to_test" "$secondary_output" "$output_filename" "$certificate_file" "$keystore_password" "$keystore_alias" "$private_key_password" "$workflow_output_logs" "$download_deobfuscation" "$crashlytics_app_id" "$datadog_api_key"
+# bash ./step.sh "$app_location" "$fusion_set_id" "$team_id" "$sign_method" "$gp_signing" "$google_fingerprint" "$fingerprint" "$build_logs" "$build_to_test" "$secondary_output" "$output_filename" "$certificate_file" "$keystore_password" "$keystore_alias" "$private_key_password" "$workflow_output_logs" "$download_deobfuscation" "$crashlytics_app_id" "$datadog_api_key"
+bash ./step.sh "$app_location" "$fusion_set_id" "$team_id" "$sign_method" "$gp_signing" "$google_fingerprint" "$fingerprint" "$build_logs" "$build_to_test" "$secondary_output" "$output_filename" "$workflow_output_logs" "$download_deobfuscation" "$crashlytics_app_id" "$datadog_api_key"
 exit $(echo $?)
