@@ -40,22 +40,6 @@ if [[ -z $output_filename ]];then
     output_filename="_@_"
 fi
 
-# if [[ -z $certificate_file ]];then
-#     certificate_file="_@_"
-# fi
-
-# if [[ -z $keystore_password ]];then
-#     keystore_password="_@_"
-# fi
-
-# if [[ -z $keystore_alias ]];then
-#     keystore_alias="_@_"
-# fi
-
-# if [[ -z $private_key_password ]];then
-#     private_key_password="_@_"
-# fi
-
 if [[ -z $fusion_set_id ]];then
     echo "No Fusion Set ID was provided. Exiting."
     exit 1
