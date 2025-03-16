@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-# file version: RS-A-3.7T
+# file version: RS-A-3.8
 # echo "This is the value specified for the input 'example_step_input': ${example_step_input}"
 
 #
@@ -23,6 +23,14 @@ set -e
 
 # This is step.sh file for Android apps
 
+cleanup() {
+	cd $PWD/..
+	pwd=$PWD
+	cd $PWD/..
+	rm -rf $pwd
+	exit 0
+}
+
 appdome_pipeline_values () {
 	sign_method=$APPDOME_PIPELINE_SIGNING_METHOD
 	 
@@ -40,23 +48,40 @@ appdome_pipeline_values () {
 }
 
 debug () {
-	echo "Debugger:" > $BITRISE_DEPLOY_DIR/debug.txt
+	echo "Running in Debug mode... Please wait for completion."
+	echo "DEBUG DATA:" > $BITRISE_DEPLOY_DIR/debug.txt
+	echo "-----------" > $BITRISE_DEPLOY_DIR/debug.txt
+	echo "App: $app_file" >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo "API key: $APPDOME_API_KEY" >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo "Sign method: $sign_method" >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo "Sign command: $sign_command" >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo "Keystore file: $keystore_file" >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo "Keystore alias: $keystore_alias" >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo "Keystore pass: $keystore_pass" >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo "Fusion set ID: $fusion_set_id" >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo "TM: $tm" >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo "FP: $gp" >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo "SF: $sf" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "BL: $bl" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "BTV: $btv" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "SO: $so" >> $BITRISE_DEPLOY_DIR/debug.txt 
-
+	echo "DSO: $dso" >> $BITRISE_DEPLOY_DIR/debug.txt 
+	echo "DD: $dd" >> $BITRISE_DEPLOY_DIR/debug.txt 
+	echo "AID: $aid" >> $BITRISE_DEPLOY_DIR/debug.txt 
+	echo "WOL: $wol" >> $BITRISE_DEPLOY_DIR/debug.txt 
+	echo "Secured output: $secured_app_output" >> $BITRISE_DEPLOY_DIR/debug.txt 
+	echo "Certificate output: $certificate_output" >> $BITRISE_DEPLOY_DIR/debug.txt 
+	echo >> $BITRISE_DEPLOY_DIR/debug.txt
+	pwd >> $BITRISE_DEPLOY_DIR/debug.txt
 	ls -al >> $BITRISE_DEPLOY_DIR/debug.txt
 	ls -al .. >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo >> $BITRISE_DEPLOY_DIR/debug.txt
-	echo --api_key $APPDOME_API_KEY \
+	echo "Command line (valid for On Appdome Sign only):" >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo ./appdome_api.sh  --api_key $APPDOME_API_KEY \
 		--app $app_file \
 		--fusion_set_id $fusion_set_id \
 		$tm \
-		--sign_on_appdome \
+		$sign_command \
 		--keystore $keystore_file \
 		--keystore_pass $keystore_pass \
 		--keystore_alias $keystore_alias \
@@ -66,10 +91,13 @@ debug () {
 		$btv \
 		$so \
 		$dso \
+		$dd \
 		$aid \
 		$wol \
 		--output $secured_app_output \
 		--certificate_output $certificate_output >> $BITRISE_DEPLOY_DIR/debug.txt
+	echo "Done. See debug.txt in Artifacts section for results."
+	cleanup
 }
 
 print_all_params() {
@@ -93,6 +121,9 @@ print_all_params() {
 	echo "Certificate output: $certificate_output"
 	echo "Secondary output: $secured_so_app_output"
 	echo "Workflow output logs file: $workflow_output_logs"
+	echo "Deobfuscation mapping files location: $deob_output"
+	echo "Crashlytics app id: $app_id"
+	echo "Datadog API key: $datadog_api_key"
 	echo "-----------------------------------------"
 }
 
@@ -103,9 +134,9 @@ download_file() {
 	curl -L $file_location --output $downloaded_file && echo $downloaded_file
 }
 
-internal_version="RS-A-3.7"
+internal_version="RS-A-3.8"
 echo "Internal version: $internal_version"
-export APPDOME_CLIENT_HEADER="Bitrise/3.7.0"
+export APPDOME_CLIENT_HEADER="Bitrise/3.8.0"
 
 app_location=$1
 fusion_set_id=$2
@@ -118,13 +149,11 @@ build_logs=$8
 build_to_test=$9
 secondary_output=${10}
 output_filename=${11}
-certificate_file=${12}
-keystore_pass=${13}
-keystore_alias=${14}
-private_key_password=${15}
-workflow_output_logs=${16}
+workflow_output_logs=${12}
+download_deobfuscation=${13}
+app_id=${14}
+datadog_api_key=${15}
 
-app_id=""
 
 if [[ -n $APPDOME_PIPELINE_SIGNING_METHOD ]]; then
 	appdome_pipeline_values
@@ -148,22 +177,8 @@ else
 fi
 
 aid=""
-if [[ -n $GOOGLE_APPLICATION_CREDENTIALS ]]; then
-	if [[ $GOOGLE_APPLICATION_CREDENTIALS == *"http"* ]]; then
-		GOOGLE_APPLICATION_CREDENTIALS=../$(download_file $GOOGLE_APPLICATION_CREDENTIALS)
-	else
-		google_service_file=$GOOGLE_APPLICATION_CREDENTIALS
-		if [[ $google_service_file == *" "* ]];	then
-			GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS//" "/"_"}
-			cp "$google_service_file" "$GOOGLE_APPLICATION_CREDENTIALS"
-		fi
-	fi
-	envman add --key GOOGLE_APPLICATION_CREDENTIALS --value $GOOGLE_APPLICATION_CREDENTIALS
-	if [[ -n $app_id ]]; then 
-		aid="-aid $app_id"
-	fi
-else
-	echo "WARNING: GOOGLE_APPLICATION_CREDENTIALS file was not provided, deobfuscation map will not be uploaded to Crashlytics." 
+if [[ $app_id != "_@_" ]]; then 
+	aid="-aid $app_id"
 fi
 
 so=""
@@ -242,26 +257,44 @@ fi
 
 btv=""
 if [[ $build_to_test != "none" ]]; then
-	btv="--build_to_test_vendor  $build_to_test"
+	btv="--build_to_test_vendor $build_to_test"
 fi
 
-dso="-dso $BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip"
+dso=""
+deob_output=""
+if [[ $download_deobfuscation == "true" ]]; then
+	deob_output=$BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip
+	dso="-dso ${deob_output}"
+fi
+
+dd=""
+if [[ $datadog_api_key != "_@_" ]]; then
+	dd="-dd_api_key $datadog_api_key"
+fi
+
+sign_command=""
+cmd=""
 
 case $sign_method in
 "Private-Signing")		
-						print_all_params
 						echo "Private Signing"
-						./appdome_api.sh --api_key $APPDOME_API_KEY \
+						sign_command="--private_signing"
+						print_all_params
+						if [[ $APPDOME_DEBUG == "1" ]]; then
+							debug
+						fi
+						c./appdome_api.sh --api_key $APPDOME_API_KEY \
 							--app $app_file \
 							--fusion_set_id $fusion_set_id \
 							$tm \
-							--private_signing \
+							$sign_command \
 							$gp \
 							$sf \
 							$bl \
 							$btv \
 							$so \
 							$dso \
+							$dd \
 							$aid \
 							$wol \
 							--output "$secured_app_output" \
@@ -269,79 +302,92 @@ case $sign_method in
 						;;
 "Auto-Dev-Signing")		
 						echo "Auto Dev Signing"
+						sign_command="--auto_dev_private_signing"
 						secured_app_output_name=${secured_app_output%.*}
 						secured_app_output=$secured_app_output_name.sh
+						
 						print_all_params
+						if [[ $APPDOME_DEBUG == "1" ]]; then
+							debug
+						fi
+
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
 							--app $app_file \
 							--fusion_set_id $fusion_set_id \
 							$tm \
-							--auto_dev_private_signing \
+							$sign_command \
 							$gp \
 							$sf \
 							$bl \
 							$btv \
 							$dso \
+							$dd \
 							$aid \
 							$wol \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
 "On-Appdome")			
-						if [[ $certificate_file == "_@_" || -z $certificate_file ]]; then
-							if [[ -n $BITRISEIO_ANDROID_KEYSTORE_URL ]]; then
-								certificate_file=$BITRISEIO_ANDROID_KEYSTORE_URL
-								keystore_pass=$BITRISEIO_ANDROID_KEYSTORE_PASSWORD
-								private_key_password=$BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
-								keystore_alias=$BITRISEIO_ANDROID_KEYSTORE_ALIAS
-							elif [[ -n $BITRISEIO_ANDROID_KEYSTORE_1_URL ]]; then
-									certificate_file=$BITRISEIO_ANDROID_KEYSTORE_1_URL
-									keystore_pass=$BITRISEIO_ANDROID_KEYSTORE_1_PASSWORD
-									private_key_password=$BITRISEIO_ANDROID_KEYSTORE_1_PRIVATE_KEY_PASSWORD
-									keystore_alias=$BITRISEIO_ANDROID_KEYSTORE_1_ALIAS
-							else
-								echo "Could not find keystore file. Please recheck Android keystore file environment variable. Exiting."
-								exit 1
-							fi
+						echo "On Appdome Signing"
+						sign_command="--sign_on_appdome"
+						if [[ -n $BITRISEIO_ANDROID_KEYSTORE_URL ]]; then
+							certificate_file=$BITRISEIO_ANDROID_KEYSTORE_URL
+							keystore_pass=$BITRISEIO_ANDROID_KEYSTORE_PASSWORD
+							private_key_password=$BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
+							keystore_alias=$BITRISEIO_ANDROID_KEYSTORE_ALIAS
+						elif [[ -n $BITRISEIO_ANDROID_KEYSTORE_1_URL ]]; then
+								certificate_file=$BITRISEIO_ANDROID_KEYSTORE_1_URL
+								keystore_pass=$BITRISEIO_ANDROID_KEYSTORE_1_PASSWORD
+								private_key_password=$BITRISEIO_ANDROID_KEYSTORE_1_PRIVATE_KEY_PASSWORD
+								keystore_alias=$BITRISEIO_ANDROID_KEYSTORE_1_ALIAS
+						else
+							echo "Could not find keystore file. Please recheck Android keystore file environment variable. Exiting."
+							exit 1
 						fi
 
 						keystore_file=$(download_file $certificate_file)
 						ks_pass=""
-						if [[ -n $keystore_pass && $keystore_pass != "_@_" ]]; then
+						if [[ -n $keystore_pass ]]; then
 							ks_pass="[REDACTED]"
 						fi
 
 						private_key_pass=""
-						if [[ -n $private_key_password && $private_key_password != "_@_" ]]; then
+						if [[ -n $private_key_password ]]; then
 							private_key_pass="[REDACTED]"
 						fi
-												
+
+						if [[ $APPDOME_DEBUG == "1" ]]; then
+							debug
+						fi
+
 						print_all_params
 
 						if [[ ! -s $keystore_file ]]; then
 							echo "Failed obtaining keystore file. Please recheck Android keystore file environment variable. Exiting."
 							exit 1
 						fi
-						if [[ $keystore_pass == "_@_" ||  -z $keystore_pass ]]; then
+						if [[ -z $keystore_pass ]]; then
 							echo "Could not find keystore password. Please recheck Android keystore file environment variable. Exiting."
 							exit 1
 						fi
-						if [[ $keystore_alias == "_@_" || -z $keystore_alias ]]; then
+						if [[ -z $keystore_alias ]]; then
 							echo "Could not find keystore alias. Please recheck Android keystore file environment variable. Exiting."
 							exit 1
 						fi
-						if [[ $private_key_password == "_@_" || -z $private_key_password ]]; then
+						if [[ -z $private_key_password ]]; then
 							echo "Could not find keystore private key password. Please recheck Android keystore file environment variable. Exiting."
 							exit 1
 						fi
 
+						if [[ $APPDOME_DEBUG == "1" ]]; then
+							debug
+						fi
 
-						echo "On Appdome Signing"
 						./appdome_api.sh --api_key $APPDOME_API_KEY \
 							--app $app_file \
 							--fusion_set_id $fusion_set_id \
 							$tm \
-							--sign_on_appdome \
+							$sign_command \
 							--keystore $keystore_file \
 							--keystore_pass "$keystore_pass" \
 							--keystore_alias "$keystore_alias" \
@@ -351,6 +397,7 @@ case $sign_method in
 							$so \
 							--key_pass "$private_key_password" \
 							$dso \
+							$dd \
 							$aid \
 							$wol \
 							--output "$secured_app_output" \
@@ -359,7 +406,6 @@ case $sign_method in
 esac
 
 
-# rm -rf appdome-api-bash
 if [[ $secured_app_output == *.sh ]]; then
 	envman add --key APPDOME_PRIVATE_SIGN_SCRIPT_PATH --value $secured_app_output
 elif [[ $secured_app_output == *.apk ]]; then
@@ -381,7 +427,4 @@ fi
 
 envman add --key APPDOME_CERTIFICATE_PATH --value $certificate_output
 
-cd $PWD/..
-pwd=$PWD
-cd $PWD/..
-rm -rf $pwd
+cleanup
