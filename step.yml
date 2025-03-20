@@ -124,7 +124,7 @@ inputs:
         is_required: false
         category: Private/Auto-Dev Signing
 
-    - download_deobfuscation: "false"
+    - download_deobfuscation: "true"
       opts:
         title: "Download deobfuscation mapping file?"
         summary: "Select 'true' to download Appdome deobfuscation mapping zip file to the Artifacts section."
