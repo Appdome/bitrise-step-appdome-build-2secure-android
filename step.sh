@@ -85,6 +85,7 @@ debug () {
 		--keystore $keystore_file \
 		--keystore_pass $keystore_pass \
 		--keystore_alias $keystore_alias \
+		--key_pass $private_key_password \
 		$gp \
 		$sf \
 		$bl \
@@ -391,11 +392,11 @@ case $sign_method in
 							--keystore $keystore_file \
 							--keystore_pass "$keystore_pass" \
 							--keystore_alias "$keystore_alias" \
+							--key_pass "$private_key_password" \
 							$gp \
 							$bl \
 							$btv \
 							$so \
-							--key_pass "$private_key_password" \
 							$dso \
 							$dd \
 							$aid \
