@@ -262,7 +262,7 @@ fi
 
 dso=""
 deob_output=""
-if [[ $download_deobfuscation == "true" ]]; then
+if [[ $download_deobfuscation != "false" ]]; then
 	deob_output=$BITRISE_DEPLOY_DIR/deobfuscation_mapping_files.zip
 	dso="-dso ${deob_output}"
 fi
