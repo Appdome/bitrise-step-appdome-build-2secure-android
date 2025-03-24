@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set +x
 # file version: RS-A-3.8
 # echo "This is the value specified for the input 'example_step_input': ${example_step_input}"
 
