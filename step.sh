@@ -285,7 +285,6 @@ if [[ -n $multiple_trusted_signing_certs_path && $multiple_trusted_signing_certs
 			echo "Multiple Trusted Signing Certificates can't work alongside Google Play Signing (true). Exiting."
 			exit 1
 		fi
-		mtsc="--signing_fingerprint_list $multiple_trusted_signing_certs_path"
 	# Private-Signing / Auto-Dev-Signing: when using multiple_trusted_signing_certs_path, no SIGN_FINGERPRINT or Google signing allowed
 	elif [[ $sign_method == "Private-Signing" || $sign_method == "Auto-Dev-Signing" ]]; then
 		if [[ $gp_signing == "true" ]]; then
@@ -300,8 +299,16 @@ if [[ -n $multiple_trusted_signing_certs_path && $multiple_trusted_signing_certs
 			echo "Multiple Trusted Signing Certificates can't work when Sign Fingerprint has a value (Private/Auto-Dev-Signing). Exiting."
 			exit 1
 		fi
-		mtsc="--signing_fingerprint_list $multiple_trusted_signing_certs_path"
 	fi
+	if [[ ! -f $multiple_trusted_signing_certs_path ]]; then
+		echo "Multiple Trusted Signing Certificates file not found. trying to download it from $multiple_trusted_signing_certs_path."
+		multiple_trusted_signing_certs_path=$(download_file $multiple_trusted_signing_certs_path)
+		if [[ ! -f $multiple_trusted_signing_certs_path ]]; then
+			echo "Failed to download Multiple Trusted Signing Certificates file. Exiting."
+			exit 1
+		fi
+	fi
+	mtsc="--signing_fingerprint_list $multiple_trusted_signing_certs_path"
 fi
 
 sign_command=""
