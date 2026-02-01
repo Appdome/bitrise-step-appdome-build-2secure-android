@@ -125,6 +125,7 @@ print_all_params() {
 	echo "Deobfuscation mapping files location: $deob_output"
 	echo "Crashlytics app id: $app_id"
 	echo "Datadog API key: $datadog_api_key"
+	echo "Multiple trusted signing certs path: $multiple_trusted_signing_certs_path"
 	echo "-----------------------------------------"
 }
 
@@ -154,6 +155,7 @@ workflow_output_logs=${12}
 download_deobfuscation=${13}
 app_id=${14}
 datadog_api_key=${15}
+multiple_trusted_signing_certs_path=${16}
 
 
 if [[ -n $APPDOME_PIPELINE_SIGNING_METHOD ]]; then
@@ -273,6 +275,24 @@ if [[ $datadog_api_key != "_@_" ]]; then
 	dd="-dd_api_key ${datadog_api_key}"
 fi
 
+# Multiple Trusted Signing Certificates: cannot be used when Google Play Signing is true, or when Google Sign Fingerprint or Sign Fingerprint has a value
+mtsc=""
+if [[ -n $multiple_trusted_signing_certs_path && $multiple_trusted_signing_certs_path != "_@_" ]]; then
+	if [[ $gp_signing == "true" ]]; then
+		echo "Multiple Trusted Signing Certificates can't work alongside Google Play Signing (true). Exiting."
+		exit 1
+	fi
+	if [[ -n $google_fingerprint && $google_fingerprint != "_@_" ]]; then
+		echo "Multiple Trusted Signing Certificates can't work when Google Sign Fingerprint has a value. Exiting."
+		exit 1
+	fi
+	if [[ -n $fingerprint && $fingerprint != "_@_" ]]; then
+		echo "Multiple Trusted Signing Certificates can't work when Sign Fingerprint has a value. Exiting."
+		exit 1
+	fi
+	mtsc="--signing_fingerprint_list $multiple_trusted_signing_certs_path"
+fi
+
 sign_command=""
 cmd=""
 
@@ -291,6 +311,7 @@ case $sign_method in
 							$sign_command \
 							$gp \
 							$sf \
+							$mtsc \
 							$bl \
 							$btv \
 							$so \
@@ -319,6 +340,7 @@ case $sign_method in
 							$sign_command \
 							$gp \
 							$sf \
+							$mtsc \
 							$bl \
 							$btv \
 							$dso \
@@ -394,6 +416,7 @@ case $sign_method in
 							--keystore_alias "$keystore_alias" \
 							--key_pass "$private_key_password" \
 							$gp \
+							$mtsc \
 							$bl \
 							$btv \
 							$so \
