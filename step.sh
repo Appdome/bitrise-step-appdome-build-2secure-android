@@ -275,10 +275,6 @@ if [[ $datadog_api_key != "_@_" ]]; then
 	dd="-dd_api_key ${datadog_api_key}"
 fi
 
-if [[ $APPDOME_DEBUG == "1" ]]; then
-	debug
-fi
-
 # Multiple Trusted Signing Certificates: cannot be used when Google Play Signing is true, or when Google Sign Fingerprint or Sign Fingerprint has a value
 # Multiple Trusted Signing Certificates: rules depend on sign method
 mtsc=""
