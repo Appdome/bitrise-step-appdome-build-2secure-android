@@ -288,13 +288,10 @@ if [[ -n $multiple_trusted_signing_certs_path && $multiple_trusted_signing_certs
 	# Private-Signing / Auto-Dev-Signing: when using multiple_trusted_signing_certs_path, no SIGN_FINGERPRINT or Google signing allowed
 	elif [[ $sign_method == "Private-Signing" || $sign_method == "Auto-Dev-Signing" ]]; then
 		if [[ $gp_signing == "true" ]]; then
-			echo "Multiple Trusted Signing Certificates can't work alongside Google Play Signing when using Private/Auto-Dev-Signing. Please disable Google Play Signing.Exiting."
+			echo "Multiple Trusted Signing Certificates can't work alongside Google Play Signing when using Private/Auto-Dev-Signing. Please disable Google Play Signing. Exiting."
 			exit 1
 		fi
-		if [[ -n $google_fingerprint && $google_fingerprint != "_@_" ]]; then
-			echo "Multiple Trusted Signing Certificates can't work when Google Sign Fingerprint has a value (Private/Auto-Dev-Signing). Please disable Google Sign Signing. Exiting."
-			exit 1
-		fi
+		# SIGN_FINGERPRINT not allowed when using multiple_trusted_signing_certs_path (google_fingerprint is only used when gp_signing is true, already blocked above)
 		if [[ -n $fingerprint && $fingerprint != "_@_" ]]; then
 			echo "Multiple Trusted Signing Certificates can't work when Sign Fingerprint has a value (Private/Auto-Dev-Signing). Please remove Sign Fingerprint. Exiting."
 			exit 1
