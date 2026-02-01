@@ -99,6 +99,14 @@ inputs:
         - "Private-Signing"
         - "Auto-Dev-Signing"
         is_required: true
+    
+    - multiple_trusted_signing_certs_path:
+      opts:
+        title: "Multiple Trusted Signing Certificates file path"
+        summary: "Path to file containing multiple trusted signing certificates (or an EnvVar representing the path)"
+        description: "Path to file containing multiple trusted signing certificates, or an EnvVar representing its path (e.g. $MULTIPLE_TRUSTED_CERTS_PATH). Note: Multiple Trusted Signing Certificates can't work alongside 'Google Signing' or 'Private/Auto-Dev-Signing' categories."
+        is_required: false
+        category: Multiple Trusted Signing Certificates
         
     - gp_signing: "false"
       opts:
