@@ -280,21 +280,32 @@ if [[ $APPDOME_DEBUG == "1" ]]; then
 fi
 
 # Multiple Trusted Signing Certificates: cannot be used when Google Play Signing is true, or when Google Sign Fingerprint or Sign Fingerprint has a value
+# Multiple Trusted Signing Certificates: rules depend on sign method
 mtsc=""
 if [[ -n $multiple_trusted_signing_certs_path && $multiple_trusted_signing_certs_path != "_@_" ]]; then
-	if [[ $gp_signing == "true" ]]; then
-		echo "Multiple Trusted Signing Certificates can't work alongside Google Play Signing (true). Exiting."
-		exit 1
+	# On-Appdome: SIGN_FINGERPRINT is ignored; multiple_trusted_signing_certs_path allowed only when gp_signing is false
+	if [[ $sign_method == "On-Appdome" ]]; then
+		if [[ $gp_signing == "true" ]]; then
+			echo "Multiple Trusted Signing Certificates can't work alongside Google Play Signing (true). Exiting."
+			exit 1
+		fi
+		mtsc="--signing_fingerprint_list $multiple_trusted_signing_certs_path"
+	# Private-Signing / Auto-Dev-Signing: when using multiple_trusted_signing_certs_path, no SIGN_FINGERPRINT or Google signing allowed
+	elif [[ $sign_method == "Private-Signing" || $sign_method == "Auto-Dev-Signing" ]]; then
+		if [[ $gp_signing == "true" ]]; then
+			echo "Multiple Trusted Signing Certificates can't work alongside Google Play Signing when using Private/Auto-Dev-Signing. Exiting."
+			exit 1
+		fi
+		if [[ -n $google_fingerprint && $google_fingerprint != "_@_" ]]; then
+			echo "Multiple Trusted Signing Certificates can't work when Google Sign Fingerprint has a value (Private/Auto-Dev-Signing). Exiting."
+			exit 1
+		fi
+		if [[ -n $fingerprint && $fingerprint != "_@_" ]]; then
+			echo "Multiple Trusted Signing Certificates can't work when Sign Fingerprint has a value (Private/Auto-Dev-Signing). Exiting."
+			exit 1
+		fi
+		mtsc="--signing_fingerprint_list $multiple_trusted_signing_certs_path"
 	fi
-	if [[ -n $google_fingerprint && $google_fingerprint != "_@_" ]]; then
-		echo "Multiple Trusted Signing Certificates can't work when Google Sign Fingerprint has a value. Exiting."
-		exit 1
-	fi
-	if [[ -n $fingerprint && $fingerprint != "_@_" ]]; then
-		echo "Multiple Trusted Signing Certificates can't work when Sign Fingerprint has a value. Exiting."
-		exit 1
-	fi
-	mtsc="--signing_fingerprint_list $multiple_trusted_signing_certs_path"
 fi
 
 sign_command=""
