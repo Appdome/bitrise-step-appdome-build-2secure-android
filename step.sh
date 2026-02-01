@@ -260,6 +260,21 @@ if [[ $datadog_api_key != "_@_" ]]; then
 	dd="-dd_api_key ${datadog_api_key}"
 fi
 
+gp=""
+if [[ $gp_signing == "true" ]]; then
+	if [[ -z $google_fingerprint || $google_fingerprint == "_@_" ]]; then
+		if [[ -z $fingerprint ]]; then
+			echo "Google Sign Fingerprint must be provided for Google Play signing. Exiting."
+			exit 1
+		else
+			echo "Google Sign Fingerprint was not provided, will be using Sign Fringerprint instead."
+			google_fingerprint=$fingerprint
+		fi
+	fi
+	gp="--google_play_signing --signing_fingerprint ${google_fingerprint}"
+	sf=""
+fi
+
 # Multiple Trusted Signing Certificates: cannot be used when Google Play Signing is true, or when Google Sign Fingerprint or Sign Fingerprint has a value
 # Multiple Trusted Signing Certificates: rules depend on sign method
 mtsc=""
@@ -294,21 +309,6 @@ if [[ -n $multiple_trusted_signing_certs_path && $multiple_trusted_signing_certs
 		fi
 	fi
 	mtsc="--signing_fingerprint_list $multiple_trusted_signing_certs_path"
-fi
-
-gp=""
-if [[ $gp_signing == "true" ]]; then
-	if [[ -z $google_fingerprint || $google_fingerprint == "_@_" ]]; then
-		if [[ -z $fingerprint ]]; then
-			echo "Google Sign Fingerprint must be provided for Google Play signing. Exiting."
-			exit 1
-		else
-			echo "Google Sign Fingerprint was not provided, will be using Sign Fringerprint instead."
-			google_fingerprint=$fingerprint
-		fi
-	fi
-	gp="--google_play_signing --signing_fingerprint ${google_fingerprint}"
-	sf=""
 fi
 
 sign_command=""
