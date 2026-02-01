@@ -238,21 +238,6 @@ else
 	workflow_output_logs=""
 fi
 
-gp=""
-if [[ $gp_signing == "true" ]]; then
-	if [[ -z $google_fingerprint || $google_fingerprint == "_@_" ]]; then
-		if [[ -z $fingerprint ]]; then
-			echo "Google Sign Fingerprint must be provided for Google Play signing. Exiting."
-			exit 1
-		else
-			echo "Google Sign Fingerprint was not provided, will be using Sign Fringerprint instead."
-			google_fingerprint=$fingerprint
-		fi
-	fi
-	gp="--google_play_signing --signing_fingerprint ${google_fingerprint}"
-	sf=""
-fi
-
 bl=""
 if [[ $build_logs == "true" ]]; then
 	bl="--build_logs"
@@ -282,21 +267,21 @@ if [[ -n $multiple_trusted_signing_certs_path && $multiple_trusted_signing_certs
 	# On-Appdome: SIGN_FINGERPRINT is ignored; multiple_trusted_signing_certs_path allowed only when gp_signing is false
 	if [[ $sign_method == "On-Appdome" ]]; then
 		if [[ $gp_signing == "true" ]]; then
-			echo "Multiple Trusted Signing Certificates can't work alongside Google Play Signing (true). Exiting."
+			echo "Multiple Trusted Signing Certificates can't work alongside Google Play Signing (true). Please disable Google Play Signing. Exiting."
 			exit 1
 		fi
 	# Private-Signing / Auto-Dev-Signing: when using multiple_trusted_signing_certs_path, no SIGN_FINGERPRINT or Google signing allowed
 	elif [[ $sign_method == "Private-Signing" || $sign_method == "Auto-Dev-Signing" ]]; then
 		if [[ $gp_signing == "true" ]]; then
-			echo "Multiple Trusted Signing Certificates can't work alongside Google Play Signing when using Private/Auto-Dev-Signing. Exiting."
+			echo "Multiple Trusted Signing Certificates can't work alongside Google Play Signing when using Private/Auto-Dev-Signing. Please disable Google Play Signing.Exiting."
 			exit 1
 		fi
 		if [[ -n $google_fingerprint && $google_fingerprint != "_@_" ]]; then
-			echo "Multiple Trusted Signing Certificates can't work when Google Sign Fingerprint has a value (Private/Auto-Dev-Signing). Exiting."
+			echo "Multiple Trusted Signing Certificates can't work when Google Sign Fingerprint has a value (Private/Auto-Dev-Signing). Please disable Google Sign Signing. Exiting."
 			exit 1
 		fi
 		if [[ -n $fingerprint && $fingerprint != "_@_" ]]; then
-			echo "Multiple Trusted Signing Certificates can't work when Sign Fingerprint has a value (Private/Auto-Dev-Signing). Exiting."
+			echo "Multiple Trusted Signing Certificates can't work when Sign Fingerprint has a value (Private/Auto-Dev-Signing). Please remove Sign Fingerprint. Exiting."
 			exit 1
 		fi
 	fi
@@ -309,6 +294,21 @@ if [[ -n $multiple_trusted_signing_certs_path && $multiple_trusted_signing_certs
 		fi
 	fi
 	mtsc="--signing_fingerprint_list $multiple_trusted_signing_certs_path"
+fi
+
+gp=""
+if [[ $gp_signing == "true" ]]; then
+	if [[ -z $google_fingerprint || $google_fingerprint == "_@_" ]]; then
+		if [[ -z $fingerprint ]]; then
+			echo "Google Sign Fingerprint must be provided for Google Play signing. Exiting."
+			exit 1
+		else
+			echo "Google Sign Fingerprint was not provided, will be using Sign Fringerprint instead."
+			google_fingerprint=$fingerprint
+		fi
+	fi
+	gp="--google_play_signing --signing_fingerprint ${google_fingerprint}"
+	sf=""
 fi
 
 sign_command=""
