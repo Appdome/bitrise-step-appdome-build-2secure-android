@@ -69,6 +69,10 @@ if [[ -z $datadog_api_key ]];then
     datadog_api_key="_@_"
 fi
 
+if [[ -z $multiple_trusted_signing_certs_path ]];then
+    multiple_trusted_signing_certs_path="_@_"
+fi
+
 branch="RealStep"
 if [[ -n $APPDOME_BRANCH_ANDROID ]]; then
     branch=$APPDOME_BRANCH_ANDROID
@@ -78,5 +82,5 @@ echo "Running Branch: $branch"
 # step execusion
 git clone --branch $branch https://github.com/Appdome/bitrise-step-appdome-build-2secure-android.git  > /dev/null
 cd bitrise-step-appdome-build-2secure-android
-bash ./step.sh "$app_location" "$fusion_set_id" "$team_id" "$sign_method" "$gp_signing" "$google_fingerprint" "$fingerprint" "$build_logs" "$build_to_test" "$secondary_output" "$output_filename" "$workflow_output_logs" "$download_deobfuscation" "$crashlytics_app_id" "$datadog_api_key"
+bash ./step.sh "$app_location" "$fusion_set_id" "$team_id" "$sign_method" "$gp_signing" "$google_fingerprint" "$fingerprint" "$build_logs" "$build_to_test" "$secondary_output" "$output_filename" "$workflow_output_logs" "$download_deobfuscation" "$crashlytics_app_id" "$datadog_api_key" "$multiple_trusted_signing_certs_path"
 exit $(echo $?)
