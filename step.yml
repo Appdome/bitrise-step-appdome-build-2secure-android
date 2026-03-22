@@ -99,6 +99,41 @@ inputs:
         - "Private-Signing"
         - "Auto-Dev-Signing"
         is_required: true
+
+    - android_keystore_url_env:
+      opts:
+        title: "Keystore URL — env var name"
+        summary: "Name of the Bitrise env var that holds the keystore download URL (Code Signing upload)."
+        description: |
+          Optional. Use when the project has multiple Android keystores in **App settings → Code Signing**.
+
+          Enter the **variable name only** (no `$`), e.g. `BITRISEIO_ANDROID_KEYSTORE_1_URL` for the second uploaded keystore.
+          Leave all four Code Signing inputs empty to keep the default: Bitrise’s primary keystore, or `_1` if the primary URL is unset (same as before).
+
+          If you set this field, you must set all four: URL, password, alias, and private key password env var names.
+        is_required: false
+        category: Code Signing
+
+    - android_keystore_password_env:
+      opts:
+        title: "Keystore password — env var name"
+        summary: "Name of the Bitrise env var for the keystore password (e.g. BITRISEIO_ANDROID_KEYSTORE_1_PASSWORD)."
+        is_required: false
+        category: Code Signing
+
+    - android_keystore_alias_env:
+      opts:
+        title: "Keystore alias — env var name"
+        summary: "Name of the Bitrise env var for the key alias (e.g. BITRISEIO_ANDROID_KEYSTORE_1_ALIAS)."
+        is_required: false
+        category: Code Signing
+
+    - android_keystore_private_key_password_env:
+      opts:
+        title: "Private key password — env var name"
+        summary: "Name of the Bitrise env var for the private key password (e.g. BITRISEIO_ANDROID_KEYSTORE_1_PRIVATE_KEY_PASSWORD)."
+        is_required: false
+        category: Code Signing
     
     - multiple_trusted_signing_certs_path:
       opts:

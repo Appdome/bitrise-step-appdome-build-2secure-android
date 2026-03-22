@@ -73,6 +73,37 @@ if [[ -z $multiple_trusted_signing_certs_path ]];then
     multiple_trusted_signing_certs_path="_@_"
 fi
 
+# Optional: use a specific Bitrise Code Signing keystore by env var *names* (e.g. second upload:
+# BITRISEIO_ANDROID_KEYSTORE_1_URL, ...). Remaps into BITRISEIO_ANDROID_KEYSTORE_* so RealStep step.sh
+# keeps using the primary branch without changes.
+_any_custom_ks="${android_keystore_url_env:-}${android_keystore_password_env:-}${android_keystore_alias_env:-}${android_keystore_private_key_password_env:-}"
+if [[ -n $_any_custom_ks ]]; then
+    if [[ -z "${android_keystore_url_env:-}" || -z "${android_keystore_password_env:-}" || -z "${android_keystore_alias_env:-}" || -z "${android_keystore_private_key_password_env:-}" ]]; then
+        echo "When using custom Code Signing env var names, set all four: android_keystore_url_env, android_keystore_password_env, android_keystore_alias_env, android_keystore_private_key_password_env."
+        exit 1
+    fi
+    for _ks_input in android_keystore_url_env android_keystore_password_env android_keystore_alias_env android_keystore_private_key_password_env; do
+        eval "_ks_ref=\$$_ks_input"
+        if [[ ! $_ks_ref =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
+            echo "Invalid env var name for ${_ks_input}: '${_ks_ref}'"
+            exit 1
+        fi
+    done
+    eval "_ks_url_val=\$$android_keystore_url_env"
+    eval "_ks_pass_val=\$$android_keystore_password_env"
+    eval "_ks_alias_val=\$$android_keystore_alias_env"
+    eval "_ks_keypass_val=\$$android_keystore_private_key_password_env"
+    if [[ -z $_ks_url_val ]]; then
+        echo "Keystore URL is empty: env var '${android_keystore_url_env}' is unset or empty."
+        exit 1
+    fi
+    export BITRISEIO_ANDROID_KEYSTORE_URL="$_ks_url_val"
+    export BITRISEIO_ANDROID_KEYSTORE_PASSWORD="$_ks_pass_val"
+    export BITRISEIO_ANDROID_KEYSTORE_ALIAS="$_ks_alias_val"
+    export BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD="$_ks_keypass_val"
+    echo "Using keystore from Code Signing env vars: ${android_keystore_url_env} (remapped to BITRISEIO_ANDROID_KEYSTORE_URL)."
+fi
+
 branch="RealStep"
 if [[ -n $APPDOME_BRANCH_ANDROID ]]; then
     branch=$APPDOME_BRANCH_ANDROID
