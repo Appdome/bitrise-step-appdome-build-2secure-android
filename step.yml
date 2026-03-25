@@ -103,35 +103,17 @@ inputs:
     - android_keystore_url_env:
       opts:
         title: "Keystore URL — env var name"
-        summary: "Name of the Bitrise env var that holds the keystore download URL (Code Signing upload)."
+        summary: "Bitrise Code Signing URL variable name only; password, alias, and key password names are derived from it."
         description: |
-          Optional. Use when the project has multiple Android keystores in **App settings → Code Signing**.
+          Optional. Enter the **name** of the keystore URL variable from **App settings → Code Signing** (no `$`).
 
-          Enter the **variable name only** (no `$`), e.g. `BITRISEIO_ANDROID_KEYSTORE_1_URL` for the second uploaded keystore.
-          Leave all four Code Signing inputs empty to keep the default: Bitrise’s primary keystore, or `_1` if the primary URL is unset (same as before).
+          Password, alias, and private key password env var names are **derived** from this name, for example:
+          - `BITRISEIO_ANDROID_KEYSTORE_4_URL` → `..._4_PASSWORD`, `..._4_ALIAS`, `..._4_PRIVATE_KEY_PASSWORD`
+          - `BITRISEIO_ANDROID_KEYSTORE_URL_4` → `..._PASSWORD_4`, `..._ALIAS_4`, `..._PRIVATE_KEY_PASSWORD_4`
 
-          If you set this field, you must set all four: URL, password, alias, and private key password env var names.
-        is_required: false
-        category: Code Signing
+          Confirm on the Code Signing page that Bitrise uses the same pattern for that keystore.
 
-    - android_keystore_password_env:
-      opts:
-        title: "Keystore password — env var name"
-        summary: "Name of the Bitrise env var for the keystore password (e.g. BITRISEIO_ANDROID_KEYSTORE_1_PASSWORD)."
-        is_required: false
-        category: Code Signing
-
-    - android_keystore_alias_env:
-      opts:
-        title: "Keystore alias — env var name"
-        summary: "Name of the Bitrise env var for the key alias (e.g. BITRISEIO_ANDROID_KEYSTORE_1_ALIAS)."
-        is_required: false
-        category: Code Signing
-
-    - android_keystore_private_key_password_env:
-      opts:
-        title: "Private key password — env var name"
-        summary: "Name of the Bitrise env var for the private key password (e.g. BITRISEIO_ANDROID_KEYSTORE_1_PRIVATE_KEY_PASSWORD)."
+          Leave empty for the default: primary `BITRISEIO_ANDROID_KEYSTORE_URL`, or `_1` if the primary URL is unset.
         is_required: false
         category: Code Signing
     
