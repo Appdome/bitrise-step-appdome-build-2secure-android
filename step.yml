@@ -103,19 +103,10 @@ inputs:
     - android_keystore_url_env:
       opts:
         title: "Keystore URL — env var name"
-        summary: "Bitrise Code Signing URL variable name only; password, alias, and key password names are derived from it."
-        description: |
-          Optional. Enter the **name** of the keystore URL variable from **App settings → Code Signing** (no `$`).
-
-          Password, alias, and private key password env var names are **derived** from this name, for example:
-          - `BITRISEIO_ANDROID_KEYSTORE_4_URL` → `..._4_PASSWORD`, `..._4_ALIAS`, `..._4_PRIVATE_KEY_PASSWORD`
-          - `BITRISEIO_ANDROID_KEYSTORE_URL_4` → `..._PASSWORD_4`, `..._ALIAS_4`, `..._PRIVATE_KEY_PASSWORD_4`
-
-          Confirm on the Code Signing page that Bitrise uses the same pattern for that keystore.
-
-          Leave empty for the default: primary `BITRISEIO_ANDROID_KEYSTORE_URL`, or `_1` if the primary URL is unset.
+        summary: "Bitrise Code Signing keystore URL variable; password, alias, and key password env names are derived from it."
+        description: "Variable name from Project settings → Code Signing (no $). E.g. BITRISEIO_ANDROID_KEYSTORE_4_URL. Leave empty for default primary or _1 keystore."
         is_required: false
-        category: Code Signing
+        category: On-Appdome Signing
     
     - multiple_trusted_signing_certs_path:
       opts:
