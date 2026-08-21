@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-# file version: RS-A-3.8
+# file version: RS-A-3.9
 # echo "This is the value specified for the input 'example_step_input': ${example_step_input}"
 
 #
@@ -69,6 +69,8 @@ debug () {
 	echo "DD: $dd" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "AID: $aid" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "WOL: $wol" >> $BITRISE_DEPLOY_DIR/debug.txt 
+	echo "BP: $bp" >> $BITRISE_DEPLOY_DIR/debug.txt 
+	echo "SP: $sp" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "Secured output: $secured_app_output" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "Certificate output: $certificate_output" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo >> $BITRISE_DEPLOY_DIR/debug.txt
@@ -95,6 +97,8 @@ debug () {
 		$dd \
 		$aid \
 		$wol \
+		$bp \
+		$sp \
 		--output $secured_app_output \
 		--certificate_output $certificate_output >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo "Done. See debug.txt in Artifacts section for results."
@@ -126,6 +130,8 @@ print_all_params() {
 	echo "Crashlytics app id: $app_id"
 	echo "Datadog API key: $datadog_api_key"
 	echo "Multiple trusted signing certs path: $multiple_trusted_signing_certs_path"
+	echo "Baseline Profile: $baseline_profile"
+	echo "Startup Profile: $startup_profile"
 	echo "-----------------------------------------"
 }
 
@@ -136,9 +142,9 @@ download_file() {
 	curl -L $file_location --output $downloaded_file && echo $downloaded_file
 }
 
-internal_version="RS-A-3.8"
+internal_version="RS-A-3.9"
 echo "Internal version: $internal_version"
-export APPDOME_CLIENT_HEADER="Bitrise/3.8.0"
+export APPDOME_CLIENT_HEADER="Bitrise/3.9.0"
 
 app_location=$1
 fusion_set_id=$2
@@ -156,6 +162,8 @@ download_deobfuscation=${13}
 app_id=${14}
 datadog_api_key=${15}
 multiple_trusted_signing_certs_path=${16}
+baseline_profile=${17}
+startup_profile=${18}
 
 
 if [[ -n $APPDOME_PIPELINE_SIGNING_METHOD ]]; then
@@ -308,6 +316,34 @@ if [[ -n $multiple_trusted_signing_certs_path && $multiple_trusted_signing_certs
 	mtsc="--signing_fingerprint_list $multiple_trusted_signing_certs_path"
 fi
 
+resolve_profile_file() { 
+		local label="$1" 
+		local location="$2" 
+		if [[ ! -f $location ]]; then 
+				echo "$label file not found. trying to download it from $location." >&2 
+				location=$(download_file "$location") 
+				if [[ ! -f $location ]]; then 
+					echo "Failed to download $label file. Exiting." >&2 
+					exit 1 
+				fi 
+		fi 
+		echo "$location" 
+} 
+
+# Baseline Profile: users must supply an absolute path (e.g. $BITRISE_SOURCE_DIR/...), a Bitrise file-storage URL, or the output variable of a previous step.
+bp="" 
+if [[ -n $baseline_profile && $baseline_profile != "_@_" ]]; then 
+		baseline_profile=$(resolve_profile_file "Baseline Profile" "$baseline_profile") || exit 1 
+		bp="--baseline_profile $baseline_profile" 
+fi 
+
+# Startup Profile: users must supply an absolute path (e.g. $BITRISE_SOURCE_DIR/...), a Bitrise file-storage URL, or the output variable of a previous step.
+sp="" 
+if [[ -n $startup_profile && $startup_profile != "_@_" ]]; then 
+		startup_profile=$(resolve_profile_file "Startup Profile" "$startup_profile") || exit 1 
+		sp="--startup_profile $startup_profile" 
+fi 
+
 sign_command=""
 cmd=""
 
@@ -334,6 +370,8 @@ case $sign_method in
 							$dd \
 							$aid \
 							$wol \
+							$bp \
+							$sp \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
@@ -362,6 +400,8 @@ case $sign_method in
 							$dd \
 							$aid \
 							$wol \
+							$bp \
+							$sp \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
@@ -439,6 +479,8 @@ case $sign_method in
 							$dd \
 							$aid \
 							$wol \
+							$bp \
+							$sp \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
