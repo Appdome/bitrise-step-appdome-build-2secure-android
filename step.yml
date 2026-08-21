@@ -164,6 +164,22 @@ inputs:
         description: "Datadog API Key, for auto upload Appdome deobfuscation mapping file."
         is_required: false
         category: Deobfuscation Options
+
+    - baseline_profile: 
+      opts: 
+        title: "Baseline Profile file" 
+        summary: "Baseline profile .zip file to build with (path, EnvVar, or URL)." 
+        description: "Baseline profile .zip file to be used for the build. Accepts a local path, an EnvVar representing the path, or a URL the step will download from. Optional, Android only." 
+        is_required: false 
+        category: Profiles 
+
+    - startup_profile: 
+      opts: 
+        title: "Startup Profile file" 
+        summary: "Startup profile .zip file to build with (path, EnvVar, or URL)." 
+        description: "Startup profile .zip file to be used for the build. Accepts a local path, an EnvVar representing the path, or a URL the step will download from. Optional, Android only." 
+        is_required: false 
+        category: Profiles     
         
     - secondary_output: "false"
       opts:

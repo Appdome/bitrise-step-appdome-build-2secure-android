@@ -23,7 +23,7 @@ set -e
 
 # This is step_init.sh file for Android apps
 
-# version: 3.6
+# version: 3.7
 
 # parameters validation:
 if [[ -z $APPDOME_API_KEY ]]; then
@@ -71,6 +71,14 @@ fi
 
 if [[ -z $multiple_trusted_signing_certs_path ]];then
     multiple_trusted_signing_certs_path="_@_"
+fi
+
+if [[ -z $baseline_profile ]];then
+    baseline_profile="_@_"
+fi
+
+if [[ -z $startup_profile ]];then
+    startup_profile="_@_"
 fi
 
 # Optional: pick a Bitrise Code Signing keystore by the *URL* env var name; password / alias /
@@ -129,5 +137,5 @@ echo "Running Branch: $branch"
 # step execusion
 git clone --branch $branch https://github.com/Appdome/bitrise-step-appdome-build-2secure-android.git  > /dev/null
 cd bitrise-step-appdome-build-2secure-android
-bash ./step.sh "$app_location" "$fusion_set_id" "$team_id" "$sign_method" "$gp_signing" "$google_fingerprint" "$fingerprint" "$build_logs" "$build_to_test" "$secondary_output" "$output_filename" "$workflow_output_logs" "$download_deobfuscation" "$crashlytics_app_id" "$datadog_api_key" "$multiple_trusted_signing_certs_path"
+bash ./step.sh "$app_location" "$fusion_set_id" "$team_id" "$sign_method" "$gp_signing" "$google_fingerprint" "$fingerprint" "$build_logs" "$build_to_test" "$secondary_output" "$output_filename" "$workflow_output_logs" "$download_deobfuscation" "$crashlytics_app_id" "$datadog_api_key" "$multiple_trusted_signing_certs_path" "$baseline_profile" "$startup_profile"
 exit $(echo $?)
