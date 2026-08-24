@@ -319,13 +319,23 @@ fi
 resolve_profile_file() { 
 		local label="$1" 
 		local location="$2" 
+		local dest_dir="$3" 
 		if [[ ! -f $location ]]; then 
 				echo "$label file not found. trying to download it from $location." >&2 
-				location=$(download_file "$location") 
-				if [[ ! -f $location ]]; then 
+				# Unique directory so two URLs with the same basename cannot overwrite
+				# each other. Keep the URL basename so .txt / .zip is preserved.
+				mkdir -p "$dest_dir"
+				local file_location uri orig dest
+				file_location=$(echo "$location" | tr -cd '\000-\177')
+				uri=$(echo $file_location | awk -F "?" '{print $1}')
+				orig=$(basename $uri)
+				dest="$dest_dir/$orig"
+				curl -L $file_location --output "$dest"
+				if [[ ! -f $dest ]]; then 
 					echo "Failed to download $label file. Exiting." >&2 
 					exit 1 
 				fi 
+				location="$dest"
 		fi 
 		echo "$location" 
 } 
@@ -333,14 +343,14 @@ resolve_profile_file() {
 # Baseline Profile: users must supply an absolute path (e.g. $BITRISE_SOURCE_DIR/...), a Bitrise file-storage URL, or the output variable of a previous step.
 bp="" 
 if [[ -n $baseline_profile && $baseline_profile != "_@_" ]]; then 
-		baseline_profile=$(resolve_profile_file "Baseline Profile" "$baseline_profile") || exit 1 
+		baseline_profile=$(resolve_profile_file "Baseline Profile" "$baseline_profile" "baseline_profile") || exit 1 
 		bp="--baseline_profile $baseline_profile" 
 fi 
 
 # Startup Profile: users must supply an absolute path (e.g. $BITRISE_SOURCE_DIR/...), a Bitrise file-storage URL, or the output variable of a previous step.
 sp="" 
 if [[ -n $startup_profile && $startup_profile != "_@_" ]]; then 
-		startup_profile=$(resolve_profile_file "Startup Profile" "$startup_profile") || exit 1 
+		startup_profile=$(resolve_profile_file "Startup Profile" "$startup_profile" "startup_profile") || exit 1 
 		sp="--startup_profile $startup_profile" 
 fi 
 
