@@ -164,6 +164,22 @@ inputs:
         description: "Datadog API Key, for auto upload Appdome deobfuscation mapping file."
         is_required: false
         category: Deobfuscation Options
+
+    - baseline_profile: 
+      opts: 
+        title: "Baseline Profile file" 
+        summary: "Baseline profile .zip file (absolute path, EnvVar, or URL)." 
+        description: "Baseline profile for the build (.zip with baseline_prof.txt). Accepts absolute path (e.g. $BITRISE_SOURCE_DIR/...), an EnvVar representing the path, or a URL the step will download from." 
+        is_required: false 
+        category: Profiles 
+
+    - startup_profile: 
+      opts: 
+        title: "Startup Profile file" 
+        summary: "Startup profile .zip file (absolute path, EnvVar, or URL)." 
+        description: "Startup profile for the build (.zip with baseline_prof.txt). Accepts absolute path (e.g. $BITRISE_SOURCE_DIR/...), an EnvVar representing the path, or a URL the step will download from." 
+        is_required: false 
+        category: Profiles     
         
     - secondary_output: "false"
       opts:
