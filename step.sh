@@ -142,6 +142,30 @@ download_file() {
 	curl -L $file_location --output $downloaded_file && echo $downloaded_file
 }
 
+resolve_profile_file() {
+	local label="$1"
+	local location="$2"
+	local dest_dir="$3"
+	if [[ ! -f $location ]]; then
+		echo "$label file not found. trying to download it from $location." >&2
+		# Unique directory so two URLs with the same basename cannot overwrite
+		# each other. Keep the URL basename so .txt / .zip is preserved.
+		mkdir -p "$dest_dir"
+		local file_location uri orig dest
+		file_location=$(echo "$location" | tr -cd '\000-\177')
+		uri=$(echo $file_location | awk -F "?" '{print $1}')
+		orig=$(basename $uri)
+		dest="$dest_dir/$orig"
+		curl -fL $file_location --output "$dest"
+		if [[ ! -f $dest ]]; then
+			echo "Failed to download $label file. Exiting." >&2
+			exit 1
+		fi
+		location="$dest"
+	fi
+	echo "$location"
+}
+
 internal_version="RS-A-3.9"
 echo "Internal version: $internal_version"
 export APPDOME_CLIENT_HEADER="Bitrise/3.9.0"
@@ -315,30 +339,6 @@ if [[ -n $multiple_trusted_signing_certs_path && $multiple_trusted_signing_certs
 	fi
 	mtsc="--signing_fingerprint_list $multiple_trusted_signing_certs_path"
 fi
-
-resolve_profile_file() { 
-		local label="$1" 
-		local location="$2" 
-		local dest_dir="$3" 
-		if [[ ! -f $location ]]; then 
-				echo "$label file not found. trying to download it from $location." >&2 
-				# Unique directory so two URLs with the same basename cannot overwrite
-				# each other. Keep the URL basename so .txt / .zip is preserved.
-				mkdir -p "$dest_dir"
-				local file_location uri orig dest
-				file_location=$(echo "$location" | tr -cd '\000-\177')
-				uri=$(echo $file_location | awk -F "?" '{print $1}')
-				orig=$(basename $uri)
-				dest="$dest_dir/$orig"
-				curl -L $file_location --output "$dest"
-				if [[ ! -f $dest ]]; then 
-					echo "Failed to download $label file. Exiting." >&2 
-					exit 1 
-				fi 
-				location="$dest"
-		fi 
-		echo "$location" 
-} 
 
 # Baseline Profile: users must supply an absolute path (e.g. $BITRISE_SOURCE_DIR/...), a Bitrise file-storage URL, or the output variable of a previous step.
 bp="" 
