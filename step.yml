@@ -168,18 +168,18 @@ inputs:
     - baseline_profile: 
       opts: 
         title: "Baseline Profile file" 
-        summary: "Baseline profile .zip file to build with (path, EnvVar, or URL)." 
-        description: "Baseline profile .zip file to be used for the build. Accepts a local path, an EnvVar representing the path, or a URL the step will download from. Optional, Android only." 
+        summary: "ZIP with baseline_prof.txt, or a .txt file (path, EnvVar, or URL)." 
+        description: "Baseline profile for the build (.zip with baseline_prof.txt, or .txt). Accepts $BITRISE_SOURCE_DIR/..., an EnvVar, or a URL." 
         is_required: false 
         category: Profiles 
 
     - startup_profile: 
       opts: 
         title: "Startup Profile file" 
-        summary: "Startup profile .zip file to build with (path, EnvVar, or URL)." 
-        description: "Startup profile .zip file to be used for the build. Accepts a local path, an EnvVar representing the path, or a URL the step will download from. Optional, Android only." 
+        summary: "Startup profile ZIP (path, EnvVar, or URL)." 
+        description: "Startup profile ZIP for the build. Accepts $BITRISE_SOURCE_DIR/..., an EnvVar, or a URL." 
         is_required: false 
-        category: Profiles     
+        category: Profiles      
         
     - secondary_output: "false"
       opts:
