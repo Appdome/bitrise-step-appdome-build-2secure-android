@@ -165,7 +165,7 @@ inputs:
         is_required: false
         category: Deobfuscation Options
 
-    - input_mapping_file:
+    - input_mapping:
       opts:
         title: "Input Mapping file"
         summary: "R8 or ProGuard mapping .zip file (absolute path, EnvVar, or URL)."
