@@ -23,7 +23,7 @@ set -e
 
 # This is step_init.sh file for Android apps
 
-# version: 3.7
+# version: 3.8
 
 # parameters validation:
 if [[ -z $APPDOME_API_KEY ]]; then
@@ -67,6 +67,10 @@ fi
 
 if [[ -z $datadog_api_key ]];then
     datadog_api_key="_@_"
+fi
+
+if [[ -z $input_mapping_file ]];then
+    input_mapping_file="_@_"
 fi
 
 if [[ -z $multiple_trusted_signing_certs_path ]];then
@@ -137,5 +141,5 @@ echo "Running Branch: $branch"
 # step execusion
 git clone --branch $branch https://github.com/Appdome/bitrise-step-appdome-build-2secure-android.git  > /dev/null
 cd bitrise-step-appdome-build-2secure-android
-bash ./step.sh "$app_location" "$fusion_set_id" "$team_id" "$sign_method" "$gp_signing" "$google_fingerprint" "$fingerprint" "$build_logs" "$build_to_test" "$secondary_output" "$output_filename" "$workflow_output_logs" "$download_deobfuscation" "$crashlytics_app_id" "$datadog_api_key" "$multiple_trusted_signing_certs_path" "$baseline_profile" "$startup_profile"
+bash ./step.sh "$app_location" "$fusion_set_id" "$team_id" "$sign_method" "$gp_signing" "$google_fingerprint" "$fingerprint" "$build_logs" "$build_to_test" "$secondary_output" "$output_filename" "$workflow_output_logs" "$download_deobfuscation" "$crashlytics_app_id" "$datadog_api_key" "$input_mapping_file" "$multiple_trusted_signing_certs_path" "$baseline_profile" "$startup_profile"
 exit $(echo $?)
