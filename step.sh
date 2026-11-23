@@ -389,11 +389,11 @@ case $sign_method in
 							$so \
 							$dso \
 							$dd \
-							$im \
 							$aid \
 							$wol \
 							$bp \
 							$sp \
+							$im \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
@@ -420,11 +420,11 @@ case $sign_method in
 							$btv \
 							$dso \
 							$dd \
-							$im \
 							$aid \
 							$wol \
 							$bp \
 							$sp \
+							$im \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
@@ -500,11 +500,11 @@ case $sign_method in
 							$so \
 							$dso \
 							$dd \
-							$im \
 							$aid \
 							$wol \
 							$bp \
 							$sp \
+							$im \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
