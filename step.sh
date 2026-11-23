@@ -188,10 +188,10 @@ workflow_output_logs=${12}
 download_deobfuscation=${13}
 app_id=${14}
 datadog_api_key=${15}
-input_mapping=${16}
-multiple_trusted_signing_certs_path=${17}
-baseline_profile=${18}
-startup_profile=${19}
+multiple_trusted_signing_certs_path=${16}
+baseline_profile=${17}
+startup_profile=${18}
+input_mapping=${19}
 
 
 if [[ -n $APPDOME_PIPELINE_SIGNING_METHOD ]]; then
