@@ -165,6 +165,14 @@ inputs:
         is_required: false
         category: Deobfuscation Options
 
+    - input_mapping:
+      opts:
+        title: "Input Mapping file"
+        summary: "R8 or ProGuard mapping .zip file (absolute path, EnvVar, or URL)."
+        description: "Existing R8 or ProGuard mapping so Appdome can generate a combined mapping file (.zip with input_mapping.txt). Accepts absolute path (e.g. $BITRISE_SOURCE_DIR/...), an EnvVar, or a URL."
+        is_required: false
+        category: Deobfuscation Options
+
     - baseline_profile: 
       opts: 
         title: "Baseline Profile file" 
