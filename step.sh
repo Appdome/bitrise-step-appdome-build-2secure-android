@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-# file version: RS-A-3.9
+# file version: RS-A-3.10
 # echo "This is the value specified for the input 'example_step_input': ${example_step_input}"
 
 #
@@ -71,6 +71,7 @@ debug () {
 	echo "WOL: $wol" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "BP: $bp" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "SP: $sp" >> $BITRISE_DEPLOY_DIR/debug.txt 
+	echo "IM: $im" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "Secured output: $secured_app_output" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "Certificate output: $certificate_output" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo >> $BITRISE_DEPLOY_DIR/debug.txt
@@ -99,6 +100,7 @@ debug () {
 		$wol \
 		$bp \
 		$sp \
+		$im \
 		--output $secured_app_output \
 		--certificate_output $certificate_output >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo "Done. See debug.txt in Artifacts section for results."
@@ -129,6 +131,7 @@ print_all_params() {
 	echo "Deobfuscation mapping files location: $deob_output"
 	echo "Crashlytics app id: $app_id"
 	echo "Datadog API key: $datadog_api_key"
+	echo "Input mapping file: $input_mapping"
 	echo "Multiple trusted signing certs path: $multiple_trusted_signing_certs_path"
 	echo "Baseline Profile: $baseline_profile"
 	echo "Startup Profile: $startup_profile"
@@ -166,9 +169,9 @@ resolve_profile_file() {
 	echo "$location"
 }
 
-internal_version="RS-A-3.9"
+internal_version="RS-A-3.10"
 echo "Internal version: $internal_version"
-export APPDOME_CLIENT_HEADER="Bitrise/3.9.0"
+export APPDOME_CLIENT_HEADER="Bitrise/3.10.0"
 
 app_location=$1
 fusion_set_id=$2
@@ -188,6 +191,7 @@ datadog_api_key=${15}
 multiple_trusted_signing_certs_path=${16}
 baseline_profile=${17}
 startup_profile=${18}
+input_mapping=${19}
 
 
 if [[ -n $APPDOME_PIPELINE_SIGNING_METHOD ]]; then
@@ -292,6 +296,13 @@ if [[ $datadog_api_key != "_@_" ]]; then
 	dd="-dd_api_key ${datadog_api_key}"
 fi
 
+# Input Mapping File: users must supply an absolute path (e.g. $BITRISE_SOURCE_DIR/...), a Bitrise file-storage URL, or the output variable of a previous step.
+im="" 
+if [[ -n $input_mapping && $input_mapping != "_@_" ]]; then 
+		input_mapping=$(resolve_profile_file "Input Mapping File" "$input_mapping" "input_mapping") || exit 1 
+		im="--input_mapping $input_mapping" 
+fi 
+
 gp=""
 if [[ $gp_signing == "true" ]]; then
 	if [[ -z $google_fingerprint || $google_fingerprint == "_@_" ]]; then
@@ -382,6 +393,7 @@ case $sign_method in
 							$wol \
 							$bp \
 							$sp \
+							$im \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
@@ -412,6 +424,7 @@ case $sign_method in
 							$wol \
 							$bp \
 							$sp \
+							$im \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
@@ -491,6 +504,7 @@ case $sign_method in
 							$wol \
 							$bp \
 							$sp \
+							$im \
 							--output "$secured_app_output" \
 							--certificate_output $certificate_output 
 						;;
