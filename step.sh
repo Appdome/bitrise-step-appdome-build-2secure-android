@@ -67,11 +67,11 @@ debug () {
 	echo "SO: $so" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "DSO: $dso" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "DD: $dd" >> $BITRISE_DEPLOY_DIR/debug.txt 
-	echo "IM: $im" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "AID: $aid" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "WOL: $wol" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "BP: $bp" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "SP: $sp" >> $BITRISE_DEPLOY_DIR/debug.txt 
+	echo "IM: $im" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "Secured output: $secured_app_output" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo "Certificate output: $certificate_output" >> $BITRISE_DEPLOY_DIR/debug.txt 
 	echo >> $BITRISE_DEPLOY_DIR/debug.txt
@@ -96,11 +96,11 @@ debug () {
 		$so \
 		$dso \
 		$dd \
-		$im \
 		$aid \
 		$wol \
 		$bp \
 		$sp \
+		$im \
 		--output $secured_app_output \
 		--certificate_output $certificate_output >> $BITRISE_DEPLOY_DIR/debug.txt
 	echo "Done. See debug.txt in Artifacts section for results."
